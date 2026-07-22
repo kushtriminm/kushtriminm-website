@@ -30,20 +30,27 @@ export default function Navbar() {
         </ul>
 
         {/* Right Side */}
-        <div className="flex items-center gap-4">
-          <div className="hidden md:flex gap-2 text-xl">
-            🇦🇱 🇬🇧 🇩🇪
-          </div>
+        <div className="flex items-center gap-6">
 
-          <a
-            href="https://wa.me/38349833888"
-            target="_blank"
-            className="text-sm font-semibold uppercase tracking-widest text-white transition hover:text-red-500"
-          >
-            <Phone size={18} />
-            WhatsApp
-          </a>
-        </div>
+  <div className="hidden md:flex gap-2 text-xl">
+    🇦🇱 🇬🇧 🇩🇪
+  </div>
+
+  <a
+    href="tel:+38349833888"
+    className="hidden items-center gap-2 text-sm font-semibold uppercase tracking-widest text-white transition hover:text-red-500 md:flex"
+  >
+  </a>
+
+ <a
+  href="tel:+38349833888"
+  className="flex items-center gap-2 text-sm font-semibold tracking-wide text-white transition hover:text-red-500"
+>
+  <Phone size={18} />
+  +383 49 833 888
+</a>
+
+</div>
       </nav>
     </header>
   );
