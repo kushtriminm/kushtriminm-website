@@ -65,12 +65,12 @@ export default function Hero() {
         {/* Stats */}
         <div className="mt-16 grid w-full max-w-4xl grid-cols-2 gap-8 rounded-3xl border border-white/10 bg-white/10 p-8 backdrop-blur-md md:grid-cols-4">
           <div>
-            <h3 className="text-4xl font-bold text-white">2000+</h3>
+            <h3 className="text-4xl font-bold text-white">5000+</h3>
             <p className="mt-2 text-gray-300">Happy Travelers</p>
           </div>
 
           <div>
-            <h3 className="text-4xl font-bold text-white">100+</h3>
+            <h3 className="text-4xl font-bold text-white">500+</h3>
             <p className="mt-2 text-gray-300">Destinations</p>
           </div>
 

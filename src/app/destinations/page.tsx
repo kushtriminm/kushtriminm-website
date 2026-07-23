@@ -3,45 +3,25 @@ import Link from "next/link";
 const destinations = [
   {
     name: "Antalya",
-    hotels: "500+ Hotels",
+    hotels: "Lara, Side, Kemer, Belek & More",
     image:
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1200",
     link: "/destinations/antalya",
   },
   {
     name: "Greece",
-    hotels: "1000+ Hotels",
+    hotels: "Santorini, Mykonos, Halkidiki, Crete & More",
     image:
       "https://images.unsplash.com/photo-1533105079780-92b9be482077?q=80&w=1200",
     link: "/destinations/greece",
   },
-  {
-    name: "Dubai",
-    hotels: "500+ Hotels",
-    image:
-      "https://images.unsplash.com/photo-1512453979798-5ea266f8880c?q=80&w=1200",
-    link: "/destinations/dubai",
-  },
+
   {
     name: "Egypt",
-    hotels: "500+ Hotels",
+    hotels: "Hurghada, Cairo & More",
     image:
       "https://images.unsplash.com/photo-1572252009286-268acec5ca0a?q=80&w=1200",
     link: "/destinations/egypt",
-  },
-  {
-    name: "Maldives",
-    hotels: "100+ Resorts",
-    image:
-      "https://images.unsplash.com/photo-1573843981267-be1999ff37cd?q=80&w=1200",
-    link: "/destinations/maldives",
-  },
-  {
-    name: "Italy",
-    hotels: "500+ Hotels",
-    image:
-      "https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?q=80&w=1200",
-    link: "/destinations/italy",
   },
 ];
 

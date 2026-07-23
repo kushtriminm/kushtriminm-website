@@ -1,16 +1,16 @@
 const reviews = [
   {
-    name: "Arben",
+    name: "Arben K.",
     country: "Kosovo",
     text: "Amazing service! Everything was perfectly organized.",
   },
   {
-    name: "Sara",
+    name: "Sara M.",
     country: "Germany",
     text: "Best travel agency I've ever booked with.",
   },
   {
-    name: "Leon",
+    name: "Leon R.",
     country: "Switzerland",
     text: "Fantastic holiday in Antalya. Highly recommended!",
   },
