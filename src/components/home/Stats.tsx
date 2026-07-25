@@ -27,7 +27,7 @@ export default function Stats() {
 
           <div>
             <h3 className="text-5xl font-black text-red-500">
-              {inView && <CountUp end={50} duration={3} />}+
+              {inView && <CountUp end={2000} duration={3} />}+
             </h3>
             <p className="mt-3 text-gray-400">
               Destinations
@@ -36,7 +36,7 @@ export default function Stats() {
 
           <div>
             <h3 className="text-5xl font-black text-red-500">
-              {inView && <CountUp end={100} duration={3} />}+
+              {inView && <CountUp end={1000} duration={3} />}+
             </h3>
             <p className="mt-3 text-gray-400">
               Partner Hotels
