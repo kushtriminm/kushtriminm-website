@@ -271,6 +271,7 @@ export default function Footer() {
             <Globe size={16}/>
 
             Worldwide Travel Experiences
+            Powered by Visualea
 
           </div>
 
