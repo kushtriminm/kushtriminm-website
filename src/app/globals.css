@@ -1,63 +1,255 @@
 @import "tailwindcss";
 
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background:#000;
+  --foreground:#fff;
 }
+
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+
+  --color-background:var(--background);
+  --color-foreground:var(--foreground);
+
+  --font-sans:var(--font-geist-sans);
+  --font-mono:var(--font-geist-mono);
+
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
+
 html {
-  scroll-behavior: smooth;
+  scroll-behavior:smooth;
 }
+
+
 
 body {
-  background: #0a0a0a;
-}
-/* ---------- Luxury Background Glow ---------- */
 
-body {
-  background: #000;
-  overflow-x: hidden;
-}
+  background:#000;
+  color:white;
+  font-family:Arial, Helvetica, sans-serif;
+  overflow-x:hidden;
 
-body::before {
-  content: "";
-  position: fixed;
-  width: 700px;
-  height: 700px;
-  background: rgba(220, 38, 38, 0.08);
-  filter: blur(180px);
-  top: -150px;
-  left: -150px;
-  z-index: -1;
 }
 
-body::after {
-  content: "";
-  position: fixed;
-  width: 700px;
-  height: 700px;
-  background: rgba(239, 68, 68, 0.05);
-  filter: blur(220px);
-  bottom: -250px;
-  right: -250px;
-  z-index: -1;
+
+
+/* ========================= */
+/* DESTINATION GLOWS */
+/* ========================= */
+
+
+.destination-antalya::before,
+.destination-egypt::before {
+
+  content:"";
+  position:fixed;
+  width:700px;
+  height:700px;
+  filter:blur(180px);
+  top:-150px;
+  left:-150px;
+  z-index:-1;
+
+}
+
+
+/* ANTALYA */
+
+.destination-antalya::before {
+
+  background:rgba(220,38,38,.10);
+
+}
+
+
+.destination-antalya::after {
+
+  content:"";
+  position:fixed;
+  width:700px;
+  height:700px;
+  background:rgba(239,68,68,.05);
+  filter:blur(220px);
+  bottom:-250px;
+  right:-250px;
+  z-index:-1;
+
+}
+
+
+
+/* EGYPT */
+
+
+.destination-egypt::before {
+
+  background:rgba(249,115,22,.12);
+
+}
+
+
+.destination-egypt::after {
+
+  content:"";
+  position:fixed;
+  width:700px;
+  height:700px;
+  background:rgba(251,146,60,.06);
+  filter:blur(220px);
+  bottom:-250px;
+  right:-250px;
+  z-index:-1;
+
+}
+
+
+
+
+/* ========================= */
+/* HOTEL SWIPER */
+/* ========================= */
+
+
+.hotel-swiper .swiper-slide {
+
+  transition:.5s ease;
+
+}
+
+
+.hotel-swiper .swiper-slide-active {
+
+  transform:scale(1.03);
+
+}
+
+
+
+
+/* ========================= */
+/* PAGINATION DEFAULT */
+/* ========================= */
+
+
+.hotel-swiper .swiper-pagination-bullet {
+
+  background:#555 !important;
+  opacity:1 !important;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  transition:.3s;
+
+}
+
+
+
+/* ========================= */
+/* ANTALYA PAGINATION */
+/* ========================= */
+
+
+.destination-antalya 
+.hotel-swiper 
+.swiper-pagination-bullet-active {
+
+  background:#ef4444 !important;
+  width:28px;
+  height:10px;
+  border-radius:20px;
+
+}
+
+
+
+
+/* ========================= */
+/* EGYPT PAGINATION */
+/* ========================= */
+
+
+.destination-egypt 
+.hotel-swiper 
+.swiper-pagination-bullet-active {
+
+  background:#f97316 !important;
+  width:28px;
+  height:10px;
+  border-radius:20px;
+
+}
+
+
+
+
+
+/* ========================= */
+/* ARROWS */
+/* ========================= */
+
+
+.hotel-arrow {
+
+  width:50px;
+  height:50px;
+  border-radius:999px;
+  color:white;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:25px;
+  cursor:pointer;
+  transition:.3s;
+
+}
+
+
+
+.hotel-arrow:hover {
+
+  transform:scale(1.1);
+
+}
+
+
+
+/* ANTALYA ARROWS */
+
+.destination-antalya 
+.hotel-arrow {
+
+  background:#dc2626;
+
+}
+
+
+.destination-antalya 
+.hotel-arrow:hover {
+
+  background:#ef4444;
+
+}
+
+
+
+
+/* EGYPT ARROWS */
+
+
+.destination-egypt 
+.hotel-arrow {
+
+  background:#ea580c;
+
+}
+
+
+.destination-egypt 
+.hotel-arrow:hover {
+
+  background:#fb923c;
+
 }

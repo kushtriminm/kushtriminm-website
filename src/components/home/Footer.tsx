@@ -255,33 +255,22 @@ export default function Footer() {
 
         {/* BOTTOM BAR */}
 
+<div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-8 text-sm text-gray-500 md:flex-row">
+  <p>
+    © {new Date().getFullYear()} Kushtrimi NM Worldwide. All rights reserved.
+  </p>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-8 text-sm text-gray-500 md:flex-row">
+  <div className="flex items-center gap-2">
+    <Globe size={16} />
+    <span>Worldwide Travel Experiences</span>
+    <span className="text-gray-600">•</span>
+    <span className="text-gray-400">
+      Powered by <strong>Visualea</strong>
+    </span>
+  </div>
+</div>
 
-
-          <p>
-            © {new Date().getFullYear()} Kushtrimi NM Worldwide.
-            All rights reserved.
-          </p>
-
-
-
-          <div className="flex items-center gap-2">
-
-            <Globe size={16}/>
-
-            Worldwide Travel Experiences
-            Powered by Visualea
-
-          </div>
-
-
-        </div>
-
-
-
-      </div>
-
+</div>
 
     </footer>
 
