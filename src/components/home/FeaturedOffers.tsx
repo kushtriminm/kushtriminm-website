@@ -4,18 +4,21 @@ const offers = [
     hotel: "5★ All Inclusive Resort",
     price: "from €599",
     image: "/images/offers/antalya.jpg",
+    badge: "LAST MINUTE",
   },
   {
     destination: "Egypt",
     hotel: "5★ Beach Resort",
     price: "from €699",
     image: "/images/offers/egypt.jpg",
+    badge: "BEST DEAL",
   },
   {
     destination: "Dubai",
     hotel: "Luxury City Hotel",
     price: "from €899",
     image: "/images/offers/dubai.jpg",
+    badge: "POPULAR",
   },
 ];
 
@@ -25,121 +28,109 @@ export default function FeaturedOffers() {
 
       <div className="mx-auto max-w-7xl px-6">
 
+        <div className="mb-16 text-center">
 
-        {/* TITLE */}
-
-        <div className="mb-14 text-center">
-
-          <p className="font-semibold uppercase tracking-[0.3em] text-red-500">
-            Best Deals
+          <p className="font-semibold uppercase tracking-[0.35em] text-red-500">
+            Luxury Holidays
           </p>
 
-          <h2 className="mt-3 text-5xl font-bold text-white">
+          <h2 className="mt-4 text-5xl font-black text-white">
             Featured Offers
           </h2>
 
-          <p className="mt-5 text-gray-400">
-            Handpicked holidays with the best prices.
+          <p className="mx-auto mt-5 max-w-2xl text-lg text-gray-400">
+            Handpicked luxury escapes with exceptional value and unforgettable experiences.
           </p>
 
         </div>
 
-
-
-
-
-        {/* OFFERS */}
-
         <div className="grid gap-8 lg:grid-cols-3">
-
 
           {offers.map((offer) => (
 
             <div
               key={offer.destination}
-              className="overflow-hidden rounded-3xl bg-neutral-900 shadow-xl transition duration-300 hover:-translate-y-2"
+              className="group overflow-hidden rounded-3xl border border-white/10 bg-white/5 backdrop-blur-md shadow-xl transition-all duration-500 hover:-translate-y-3 hover:border-red-500/40 hover:shadow-[0_25px_80px_rgba(220,38,38,0.25)]"
             >
 
+              {/* IMAGE */}
 
-              <img
-                src={offer.image}
-                alt={offer.destination}
-                className="h-72 w-full object-cover transition duration-500 hover:scale-110"
-              />
+              <div className="relative overflow-hidden">
 
+                <img
+                  src={offer.image}
+                  alt={offer.destination}
+                  className="h-72 w-full object-cover transition duration-700 group-hover:scale-110"
+                />
 
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+
+                {/* BADGE */}
+
+                <div className="absolute left-5 top-5 rounded-full bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white shadow-lg">
+                  {offer.badge}
+                </div>
+
+              </div>
+
+              {/* CONTENT */}
 
               <div className="p-8">
-
 
                 <h3 className="text-3xl font-bold text-white">
                   {offer.destination}
                 </h3>
 
-
-
-                <p className="mt-2 text-gray-400">
+                <p className="mt-3 flex items-center gap-2 text-gray-400">
                   {offer.hotel}
                 </p>
 
+                <div className="mt-8">
 
+                  <span className="text-sm uppercase tracking-widest text-gray-500">
+                    Starting From
+                  </span>
 
-                <p className="mt-6 text-3xl font-bold text-red-500">
-                  {offer.price}
-                </p>
+                  <p className="mt-2 text-4xl font-black text-red-500">
+                    {offer.price}
+                  </p>
 
+                </div>
 
-
-
-
-                <div className="mt-8 flex gap-4">
-
-
-                  {/* WHATSAPP OFFER */}
+                <div className="mt-10 flex gap-4">
 
                   <a
                     href={`https://wa.me/38349833888?text=Hello! I'm interested in the ${offer.destination} holiday offer.`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex-1 rounded-full bg-red-600 py-3 text-center font-semibold text-white transition hover:bg-red-700"
+                    className="flex flex-1 items-center justify-center gap-2 rounded-full bg-red-600 py-3 font-semibold text-white transition duration-300 hover:bg-red-700"
                   >
                     View Offer
+                    <span className="transition group-hover:translate-x-1">
+                      →
+                    </span>
                   </a>
-
-
-
-
-
-                  {/* BOOK */}
 
                   <a
                     href={`https://wa.me/38349833888?text=Hello! I want to book ${offer.destination} holiday.`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="rounded-full border border-white px-6 py-3 text-white transition hover:bg-white hover:text-black"
+                    className="rounded-full border border-white/20 px-6 py-3 text-white transition duration-300 hover:border-red-500 hover:bg-white hover:text-black"
                   >
                     Book
                   </a>
 
-
-
                 </div>
-
 
               </div>
 
-
             </div>
-
 
           ))}
 
-
         </div>
 
-
       </div>
-
 
     </section>
   );

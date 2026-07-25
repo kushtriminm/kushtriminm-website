@@ -31,3 +31,33 @@ html {
 body {
   background: #0a0a0a;
 }
+/* ---------- Luxury Background Glow ---------- */
+
+body {
+  background: #000;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  background: rgba(220, 38, 38, 0.08);
+  filter: blur(180px);
+  top: -150px;
+  left: -150px;
+  z-index: -1;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  width: 700px;
+  height: 700px;
+  background: rgba(239, 68, 68, 0.05);
+  filter: blur(220px);
+  bottom: -250px;
+  right: -250px;
+  z-index: -1;
+}

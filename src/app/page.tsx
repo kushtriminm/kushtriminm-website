@@ -13,11 +13,11 @@ export default function Home() {
     <>
       <Hero />
       <FeaturedOffers />
-      <Stats />
-      <WhyChooseUs />
-      <Testimonials />
-      <FollowInstagram />
+       <Testimonials />
       <FeaturedDestinations />
+      <WhyChooseUs />
+      <FollowInstagram />
+      <Stats />
       <ContactBanner />
     </>
   );
