@@ -1,51 +1,58 @@
-import { Users, Plane, Globe2, Star } from "lucide-react";
+// src/components/Stats.tsx
 
-const stats = [
-  {
-    icon: <Users size={42} />,
-    number: "5,000+",
-    title: "Happy Travelers",
-  },
-  {
-    icon: <Plane size={42} />,
-    number: "700+",
-    title: "Travel Packages",
-  },
-  {
-    icon: <Globe2 size={42} />,
-    number: "30+",
-    title: "Countries",
-  },
-  {
-    icon: <Star size={42} />,
-    number: "5.0",
-    title: "Customer Rating",
-  },
-];
+"use client";
+
+import CountUp from "react-countup";
+import { useInView } from "react-intersection-observer";
 
 export default function Stats() {
+  const { ref, inView } = useInView({
+    triggerOnce: true,
+  });
+
   return (
-    <section className="bg-neutral-950 py-24 text-white">
-      <div className="mx-auto grid max-w-7xl gap-10 px-6 md:grid-cols-4">
+    <section className="bg-neutral-950 py-24" ref={ref}>
+      <div className="mx-auto max-w-6xl px-6">
 
-        {stats.map((stat) => (
-          <div
-            key={stat.title}
-            className="text-center"
-          >
-            <div className="mb-4 flex justify-center text-red-500">
-              {stat.icon}
-            </div>
+        <div className="grid gap-8 text-center md:grid-cols-4">
 
-            <h2 className="text-5xl font-bold">
-              {stat.number}
-            </h2>
-
+          <div>
+            <h3 className="text-5xl font-black text-red-500">
+              {inView && <CountUp end={10000} duration={3} />}+
+            </h3>
             <p className="mt-3 text-gray-400">
-              {stat.title}
+              Happy Travelers
             </p>
           </div>
-        ))}
+
+          <div>
+            <h3 className="text-5xl font-black text-red-500">
+              {inView && <CountUp end={50} duration={3} />}+
+            </h3>
+            <p className="mt-3 text-gray-400">
+              Destinations
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-5xl font-black text-red-500">
+              {inView && <CountUp end={100} duration={3} />}+
+            </h3>
+            <p className="mt-3 text-gray-400">
+              Partner Hotels
+            </p>
+          </div>
+
+          <div>
+            <h3 className="text-5xl font-black text-red-500">
+              24/7
+            </h3>
+            <p className="mt-3 text-gray-400">
+              Support
+            </p>
+          </div>
+
+        </div>
 
       </div>
     </section>

@@ -13,9 +13,9 @@ export default function Home() {
     <>
       <Hero />
       <FeaturedOffers />
+      <Stats />
       <WhyChooseUs />
       <Testimonials />
-      <Stats />
       <FollowInstagram />
       <FeaturedDestinations />
       <ContactBanner />
