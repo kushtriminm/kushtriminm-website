@@ -1,7 +1,7 @@
 
 import Hero from "@/components/home/Hero";
-import FeaturedOffers from "@/components/home/FeaturedOffers";
 import FeaturedDestinations from "@/components/home/FeaturedDestinations";
+import HotelsPreview from "@/components/home/HotelsPreview";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Testimonials from "@/components/home/Testimonials";
 import Stats from "@/components/home/Stats";
@@ -12,12 +12,19 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <FeaturedOffers />
-       <Testimonials />
-      <FeaturedDestinations />
-      <WhyChooseUs />
-      <FollowInstagram />
+
       <Stats />
+
+      <FeaturedDestinations />
+
+      <HotelsPreview />
+
+      <WhyChooseUs />
+
+      <Testimonials />
+
+      <FollowInstagram />
+
       <ContactBanner />
     </>
   );
