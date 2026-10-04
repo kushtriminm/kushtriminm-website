@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
-import NewsletterPopup from "@/components/NewsletterPopup";
 
 export const metadata: Metadata = {
   title: "Kushtrimi NM Worldwide",
@@ -44,7 +43,6 @@ export default function RootLayout({
 
         <WhatsAppButton />
 
-        <NewsletterPopup />
       </body>
     </html>
   );
