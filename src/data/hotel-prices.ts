@@ -1,7 +1,7 @@
 export type HotelPrice = {
   from: string;
   to: string;
-  price: number;
+  price?: number;
   board: string;
   note?: string;
 };

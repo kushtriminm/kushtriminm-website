@@ -12,6 +12,9 @@ export type Hotel = {
   category: string;
   stars?: number;
   prices: HotelPrice[];
+  price?: number;
+  pricePeriod?: string;
+  priceNote?: string;
   image: string;
   description: string;
   facilities: string[];
