@@ -17,8 +17,15 @@ const links = [
 export default function Navbar() {
   const pathname = usePathname();
 
-  const [menuOpen, setMenuOpen] = useState(false);
+  // The menu counts as open only on the page where it was opened,
+  // so it closes automatically when the page changes.
+  const [openOnPath, setOpenOnPath] = useState<string | null>(null);
+  const menuOpen = openOnPath === pathname;
+
   const [scrolled, setScrolled] = useState(false);
+
+  const closeMenu = () => setOpenOnPath(null);
+  const toggleMenu = () => setOpenOnPath(menuOpen ? null : pathname);
 
   useEffect(() => {
     const onScroll = () => {
@@ -34,148 +41,117 @@ export default function Navbar() {
 
   // Prevent background scrolling when mobile menu is open
   useEffect(() => {
-    if (menuOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    document.body.style.overflow = menuOpen ? "hidden" : "";
 
     return () => {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
 
-  // Close mobile menu when changing page
-  useEffect(() => {
-    setMenuOpen(false);
-  }, [pathname]);
-
   return (
-    <header
-      className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
-        scrolled
-          ? "bg-black/95 py-3 shadow-lg backdrop-blur-md"
-          : "bg-transparent py-5"
-      }`}
-    >
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
+    <>
+      <header
+        className={`fixed left-0 top-0 z-50 w-full transition-all duration-300 ${
+          scrolled
+            ? "bg-black/95 py-3 shadow-lg backdrop-blur-md"
+            : "bg-transparent py-5"
+        }`}
+      >
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 sm:px-6">
+          {/* LOGO */}
 
-        {/* LOGO */}
+          <Link href="/" className="shrink-0" onClick={closeMenu}>
+            <Image
+              src="/images/Logo.png"
+              alt="Kushtrimi NM Worldwide"
+              width={160}
+              height={56}
+              priority
+              className="h-auto w-[135px] sm:w-[160px]"
+            />
+          </Link>
 
-        <Link
-          href="/"
-          className="relative z-[60] shrink-0"
-          onClick={() => setMenuOpen(false)}
-        >
-          <Image
-            src="/images/Logo.png"
-            alt="Kushtrimi NM Worldwide"
-            width={160}
-            height={56}
-            priority
-            className="h-auto w-[135px] sm:w-[160px]"
-          />
-        </Link>
+          {/* DESKTOP MENU */}
 
+          <nav className="hidden items-center gap-8 lg:flex xl:gap-10">
+            {links.map((link) => {
+              const active =
+                link.href === "/"
+                  ? pathname === "/"
+                  : pathname.startsWith(link.href);
 
-        {/* DESKTOP MENU */}
-
-        <nav className="hidden items-center gap-8 lg:flex xl:gap-10">
-
-          {links.map((link) => {
-            const active =
-              link.href === "/"
-                ? pathname === "/"
-                : pathname.startsWith(link.href);
-
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                className={`group relative text-sm font-semibold tracking-[0.15em] transition ${
-                  active
-                    ? "text-red-500"
-                    : "text-white hover:text-red-500"
-                }`}
-              >
-                {link.name}
-
-                <span
-                  className={`absolute -bottom-2 left-0 h-[2px] bg-red-500 transition-all duration-300 ${
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`group relative text-sm font-semibold tracking-[0.15em] transition ${
                     active
-                      ? "w-full"
-                      : "w-0 group-hover:w-full"
+                      ? "text-red-500"
+                      : "text-white hover:text-red-500"
                   }`}
-                />
-              </Link>
-            );
-          })}
+                >
+                  {link.name}
 
-        </nav>
+                  <span
+                    className={`absolute -bottom-2 left-0 h-[2px] bg-red-500 transition-all duration-300 ${
+                      active ? "w-full" : "w-0 group-hover:w-full"
+                    }`}
+                  />
+                </Link>
+              );
+            })}
+          </nav>
 
+          {/* DESKTOP RIGHT SIDE */}
 
-        {/* DESKTOP RIGHT SIDE */}
+          <div className="hidden items-center gap-5 lg:flex">
+            <a
+              href="https://wa.me/38349833888"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="rounded-full border border-red-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600"
+            >
+              WhatsApp
+            </a>
 
-        <div className="hidden items-center gap-5 lg:flex">
+            <a
+              href="tel:+38349833888"
+              className="flex items-center gap-2 text-white transition hover:text-red-500"
+            >
+              <Phone size={18} />
 
-          <a
-            href="https://wa.me/38349833888"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-red-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600"
+              <span className="font-semibold">+383 49 833 888</span>
+            </a>
+          </div>
+
+          {/* MOBILE MENU BUTTON */}
+
+          <button
+            type="button"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            aria-expanded={menuOpen}
+            onClick={toggleMenu}
+            className="rounded-xl p-2 text-white transition hover:bg-white/10 lg:hidden"
           >
-            WhatsApp
-          </a>
-
-          <a
-            href="tel:+38349833888"
-            className="flex items-center gap-2 text-white transition hover:text-red-500"
-          >
-            <Phone size={18} />
-
-            <span className="font-semibold">
-              +383 49 833 888
-            </span>
-          </a>
-
+            {menuOpen ? <X size={30} /> : <Menu size={30} />}
+          </button>
         </div>
+      </header>
 
-
-        {/* MOBILE MENU BUTTON */}
-
-        <button
-          type="button"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen(!menuOpen)}
-          className="relative z-[60] rounded-xl p-2 text-white transition hover:bg-white/10 lg:hidden"
-        >
-          {menuOpen ? (
-            <X size={30} />
-          ) : (
-            <Menu size={30} />
-          )}
-        </button>
-
-      </div>
-
-
-      {/* MOBILE MENU */}
+      {/* MOBILE MENU (outside the header on purpose, see note below) */}
 
       <div
-        className={`fixed inset-0 z-50 bg-black transition-all duration-300 lg:hidden ${
+        aria-hidden={!menuOpen}
+        className={`fixed inset-0 z-[45] bg-black transition-opacity duration-300 lg:hidden ${
           menuOpen
             ? "visible opacity-100"
             : "pointer-events-none invisible opacity-0"
         }`}
       >
-
-        <div className="flex h-full flex-col px-6 pb-8 pt-28">
-
+        <div className="flex h-full flex-col overflow-y-auto px-6 pb-8 pt-28">
           {/* MOBILE LINKS */}
 
           <nav className="flex flex-col">
-
             {links.map((link, index) => {
               const active =
                 link.href === "/"
@@ -186,7 +162,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  onClick={() => setMenuOpen(false)}
+                  onClick={closeMenu}
                   className={`border-b border-neutral-800 py-5 text-xl font-semibold tracking-wide transition ${
                     active
                       ? "text-red-500"
@@ -203,14 +179,11 @@ export default function Navbar() {
                 </Link>
               );
             })}
-
           </nav>
-
 
           {/* MOBILE WHATSAPP */}
 
-          <div className="mt-auto">
-
+          <div className="mt-auto pt-8">
             <a
               href="https://wa.me/38349833888?text=Hello!%20I%20would%20like%20to%20ask%20about%20a%20holiday."
               target="_blank"
@@ -220,7 +193,6 @@ export default function Navbar() {
               Chat on WhatsApp
             </a>
 
-
             {/* PHONE */}
 
             <a
@@ -229,24 +201,17 @@ export default function Navbar() {
             >
               <Phone size={18} />
 
-              <span>
-                +383 49 833 888
-              </span>
+              <span>+383 49 833 888</span>
             </a>
-
 
             {/* BRAND */}
 
             <p className="mt-8 text-center text-xs uppercase tracking-[0.3em] text-neutral-600">
               Kushtrimi NM Worldwide
             </p>
-
           </div>
-
         </div>
-
       </div>
-
-    </header>
+    </>
   );
 }
