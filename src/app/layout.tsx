@@ -11,6 +11,7 @@ export const metadata: Metadata = {
     "Kushtrimi NM Worldwide - Discover hotels, holidays and unforgettable travel experiences worldwide.",
   keywords: [
     "Kushtrimi NM Worldwide",
+    "kushtrimi nm",
     "travel agency",
     "holidays",
     "hotels",
@@ -42,7 +43,6 @@ export default function RootLayout({
         <Footer />
 
         <WhatsAppButton />
-
       </body>
     </html>
   );
