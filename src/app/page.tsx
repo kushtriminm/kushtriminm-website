@@ -8,7 +8,7 @@ import Location from "@/components/home/Location";
 
 export default function Home() {
   return (
-    <>
+    <main>
       <Hero />
 
       <div id="udhetime" className="scroll-mt-20">
@@ -20,6 +20,6 @@ export default function Home() {
       <Testimonials />
       <FollowInstagram />
       <Location />
-    </>
+    </main>
   );
 }

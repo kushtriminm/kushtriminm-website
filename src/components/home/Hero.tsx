@@ -5,8 +5,7 @@ import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { busTours } from "@/data/bus-tours";
 
-const heroImage =
-  "https://images.unsplash.com/photo-1565444007614-6b38c78224df?fm=jpg&q=60&w=1800&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D";
+const heroImage = "/images/hero/home.jpg";
 
 function getToday() {
   const d = new Date();
@@ -49,6 +48,7 @@ export default function Hero() {
     <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-black sm:min-h-screen">
       <motion.img
         src={heroImage}
+        fetchPriority="high"
         alt="Airplane wing over clouds at sunset"
         className="absolute inset-0 h-full w-full object-cover object-[80%_47%] opacity-50 sm:object-[center_47%] sm:opacity-100"
         initial={{ scale: 1 }}
