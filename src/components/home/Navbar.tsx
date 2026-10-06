@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu, X, Phone } from "lucide-react";
+import SocialIcons from "@/components/SocialIcons";
 
 const links = [
   { name: "HOME", href: "/" },
@@ -105,14 +106,6 @@ export default function Navbar() {
           {/* DESKTOP RIGHT SIDE */}
 
           <div className="hidden items-center gap-5 lg:flex">
-            <a
-              href="https://wa.me/38349833888"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="rounded-full border border-red-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-600"
-            >
-              WhatsApp
-            </a>
 
             <a
               href="tel:+38349833888"
@@ -121,7 +114,7 @@ export default function Navbar() {
               <Phone size={18} />
 
               <span className="font-semibold">+383 49 833 888</span>
-            </a>
+            </a> <SocialIcons />
           </div>
 
           {/* MOBILE MENU BUTTON */}
@@ -198,7 +191,7 @@ export default function Navbar() {
             <a
               href="tel:+38349833888"
               className="mt-5 flex items-center justify-center gap-2 text-gray-300 transition hover:text-red-500"
-            >
+            > <SocialIcons className="mt-5 justify-center" />
               <Phone size={18} />
 
               <span>+383 49 833 888</span>

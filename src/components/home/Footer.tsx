@@ -1,278 +1,137 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import {
-  Phone,
-  Mail,
-  MapPin,
-  Globe,
-} from "lucide-react";
+import { Phone, Mail, MapPin } from "lucide-react";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
+const links = [
+  { name: "Home", href: "/" },
+  { name: "Destinations", href: "/destinations" },
+  { name: "Hotels", href: "/hotels" },
+  { name: "About", href: "/about" },
+  { name: "Contact", href: "/contact" },
+];
+
+const socials = [
+  {
+    name: "Instagram",
+    href: "https://www.instagram.com/kushtriminm",
+    icon: FaInstagram,
+  },
+  {
+    name: "Facebook",
+    href: "https://www.facebook.com/profile.php?id=61558633936209",
+    icon: FaFacebookF,
+  },
+];
+
+const directionsUrl =
+  "https://www.google.com/maps/search/?api=1&query=42.3768706,20.4321499";
 
 export default function Footer() {
-
   return (
-
-    <footer className="border-t border-neutral-800 bg-black text-white">
-
-
-      <div className="mx-auto max-w-7xl px-6 py-16">
-
-
-        <div className="grid gap-12 md:grid-cols-3">
-
-
-
-
-
-          {/* BRAND */}
-
+    <footer className="bg-black text-white">
+      <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16">
+        <div className="grid gap-10 md:grid-cols-3">
+          {/* Brand */}
           <div>
-
-
             <Image
-              src="/images/logo.png"
+              src="/images/Logo.png"
               alt="Kushtrimi NM Worldwide"
               width={220}
               height={80}
-              className="h-auto w-[220px] object-contain"
+              className="h-auto w-[180px]"
             />
 
-
-
-            <p className="mt-6 max-w-sm leading-7 text-gray-400">
-
-              Luxury holidays, family vacations and unforgettable experiences
-              around the world.
-
+            <p className="mt-5 max-w-sm leading-7 text-gray-400">
+              Holidays, flights, hotels and bus tours, arranged personally from
+              Gjakov&euml;.
             </p>
 
+            <div className="mt-5 flex gap-3">
+              {socials.map((social) => {
+                const Icon = social.icon;
 
+                return (
+                  <a
+                    key={social.name}
+                    href={social.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={social.name}
+                    className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-700 text-gray-300 transition hover:border-red-500 hover:text-red-500"
+                  >
+                    <Icon size={18} />
+                  </a>
+                );
+              })}
+            </div>
+          </div>
 
+          {/* Links */}
+          <div>
+            <h3 className="text-lg font-bold">Explore</h3>
 
+            <div className="mt-5 flex flex-col gap-3 text-gray-400">
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="transition hover:text-white"
+                >
+                  {link.name}
+                </Link>
+              ))}
+            </div>
+          </div>
 
-            <div className="mt-6 flex gap-4">
+          {/* Contact */}
+          <div>
+            <h3 className="text-lg font-bold">Contact</h3>
 
-
+            <div className="mt-5 space-y-4 text-gray-400">
               <a
-                href="https://www.instagram.com/kushtriminm"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="rounded-full border border-neutral-700 px-5 py-3 text-sm transition hover:border-red-500 hover:text-red-500"
+                href="tel:+38349833888"
+                className="flex items-center gap-3 transition hover:text-white"
               >
-
-                Instagram
-
+                <Phone size={18} className="shrink-0 text-red-500" />
+                +383 49 833 888
               </a>
 
+              <a
+                href="mailto:info@kushtriminm.com"
+                className="flex items-center gap-3 transition hover:text-white"
+              >
+                <Mail size={18} className="shrink-0 text-red-500" />
+                info@kushtriminm.com
+              </a>
 
-
+              <a
+                href={directionsUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 transition hover:text-white"
+              >
+                <MapPin size={18} className="shrink-0 text-red-500" />
+                Xheladin Hana, Gjakov&euml;
+              </a>
             </div>
-
-
-
-          </div>
-
-
-
-
-
-
-
-
-
-          {/* QUICK LINKS */}
-
-
-          <div>
-
-
-            <h3 className="text-lg font-bold">
-              Explore
-            </h3>
-
-
-
-            <div className="mt-6 flex flex-col gap-4 text-gray-400">
-
-
-              <Link
-                href="/"
-                className="transition hover:text-white"
-              >
-                Home
-              </Link>
-
-
-              <Link
-                href="/offers"
-                className="transition hover:text-white"
-              >
-                Offers
-              </Link>
-
-
-              <Link
-                href="/about"
-                className="transition hover:text-white"
-              >
-                About Us
-              </Link>
-
-
-              <Link
-                href="/contact"
-                className="transition hover:text-white"
-              >
-                Contact
-              </Link>
-
-
-
-            </div>
-
-
-
-          </div>
-
-
-
-
-
-
-
-
-
-          {/* CONTACT */}
-
-
-          <div>
-
-
-            <h3 className="text-lg font-bold">
-              Contact
-            </h3>
-
-
-
-
-            <div className="mt-6 space-y-5 text-gray-400">
-
-
-
-
-
-              <div className="flex items-center gap-3">
-
-                <Phone
-                  size={19}
-                  className="text-red-500"
-                />
-
-                <span>
-                  +383 49 833 888
-                </span>
-
-              </div>
-
-
-
-
-
-
-
-              <div className="flex items-center gap-3">
-
-                <Mail
-                  size={19}
-                  className="text-red-500"
-                />
-
-                <span>
-                  info@kushtriminm.com
-                </span>
-
-              </div>
-
-
-
-
-
-
-
-              <div className="flex items-center gap-3">
-
-                <MapPin
-                  size={19}
-                  className="text-red-500"
-                />
-
-                <span>
-                  Gjakovë, Kosovo
-                </span>
-
-              </div>
-
-
-
-
-
-            </div>
-
-
-
-
-
 
             <a
               href="https://wa.me/38349833888"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-8 inline-block rounded-full bg-red-600 px-8 py-3 font-semibold text-white transition hover:bg-red-700"
+              className="mt-6 inline-block rounded-full bg-red-600 px-7 py-3 font-semibold text-white transition hover:bg-red-700"
             >
-
-              WhatsApp Us
-
+              WhatsApp us
             </a>
-
-
-
           </div>
-
-
-
-
-
         </div>
 
-
-
-
-
-
-
-
-        {/* BOTTOM BAR */}
-
-<div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-neutral-800 pt-8 text-sm text-gray-500 md:flex-row">
-  <p>
-    © {new Date().getFullYear()} Kushtrimi NM Worldwide. All rights reserved.
-  </p>
-
-  <div className="flex items-center gap-2">
-    <Globe size={16} />
-    <span>Worldwide Travel Experiences</span>
-    <span className="text-gray-600">•</span>
-    <span className="text-gray-400">
-      Powered by <strong>Visualea</strong>
-    </span>
-  </div>
-</div>
-
-</div>
-
+        <div className="mt-12 border-t border-neutral-900 pt-6 text-center text-sm text-gray-500">
+          &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. All rights
+          reserved.
+        </div>
+      </div>
     </footer>
-
   );
 }

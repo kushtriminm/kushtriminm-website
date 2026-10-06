@@ -1,4 +1,5 @@
 import Hero from "@/components/home/Hero";
+import BusTours from "@/components/home/BusTours";
 import FeaturedDestinations from "@/components/home/FeaturedDestinations";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Testimonials from "@/components/home/Testimonials";
@@ -10,14 +11,14 @@ export default function Home() {
     <>
       <Hero />
 
+      <div id="udhetime" className="scroll-mt-20">
+        <BusTours />
+      </div>
+
       <FeaturedDestinations />
-
       <WhyChooseUs />
-
       <Testimonials />
-
       <FollowInstagram />
-
       <Location />
     </>
   );

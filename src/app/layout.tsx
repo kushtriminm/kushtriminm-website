@@ -35,7 +35,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="bg-black text-white antialiased">
+      <body className="overflow-x-clip bg-black text-white antialiased">
         <Navbar />
 
         <main>{children}</main>

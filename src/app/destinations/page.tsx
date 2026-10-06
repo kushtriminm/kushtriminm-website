@@ -1,164 +1,160 @@
+import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, MessageCircle } from "lucide-react";
+import { destinations, moreDestinations } from "@/data/destinations";
 
-const destinations = [
-  {
-    name: "Antalya",
-    hotels: "Lara • Side • Belek • Kemer",
-    image: "/images/destinations/antalya/hero.jpg",
-    link: "/destinations/antalya",
-    badge: "Best Seller",
-  },
-  {
-    name: "Greece",
-    hotels: "Santorini • Mykonos • Halkidiki • Crete",
-    image: "/images/destinations/greece/hero.jpg",
-    link: "/destinations/greece",
-    badge: "Luxury",
-  },
-  {
-    name: "Egypt",
-    hotels: "Hurghada • Cairo • Sharm El Sheikh",
-    image: "/images/destinations/egypt/hero.jpg",
-    link: "/destinations/egypt",
-    badge: "New",
-  },
-];
+export const metadata: Metadata = {
+  title: "Destinations | Kushtrimi NM Worldwide",
+  description:
+    "Holidays, flights, hotels and city breaks: Dubai, Antalya, Egypt, Greece, Italy, Switzerland, Germany and more.",
+};
+
+// All the words on this page. Change them here.
+const labels = {
+  eyebrow: "Ku do të shkosh?",
+  heading: "Destinacionet tona",
+  intro:
+    "Nga qytetet evropiane te plazhet e verës. Zgjidh një destinacion ose na shkruaj ku dëshiron të shkosh.",
+  explore: "Shiko më shumë",
+  ask: "Pyet për oferta",
+  moreHeading: "Kudo në botë",
+  moreText:
+    "Nuk e sheh vendin tënd? Organizojmë udhëtime kudo në botë. Na shkruaj dhe e gjejmë së bashku.",
+  cta: "Na shkruaj në WhatsApp",
+};
+
+function whatsappLink(name: string) {
+  const text = `Përshëndetje! Jam i interesuar për ${name}.`;
+  return `https://wa.me/38349833888?text=${encodeURIComponent(text)}`;
+}
+
+// 2 cards per row on phones, 3 on desktop. The last row is centred.
+const cardClass =
+  "group relative aspect-[4/5] w-[calc(50%_-_0.375rem)] overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-800 to-neutral-950 transition duration-300 hover:border-red-500/60 hover:shadow-[0_0_40px_rgba(220,38,38,0.25)] sm:aspect-[4/3] sm:w-[calc(50%_-_0.625rem)] lg:w-[calc(33.333%_-_0.84rem)]";
 
 export default function DestinationsPage() {
+  const items = destinations.filter((d) => d.active);
+
   return (
-    <main className="min-h-screen bg-black">
+    <main className="bg-black text-white">
+      {/* Header */}
+      <section className="relative overflow-hidden px-5 pb-10 pt-36 text-center sm:pb-14 sm:pt-44">
+        <Image
+          src="/images/destinations/banner.jpg"
+          alt=""
+          aria-hidden="true"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-30"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black" />
 
-      {/* HERO */}
-
-      <section
-        className="relative flex h-[55vh] items-center justify-center overflow-hidden"
-        style={{
-          backgroundImage: "url('/images/destinations/banner.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-      >
-        <div className="absolute inset-0 bg-black/70" />
-
-        <div className="relative z-10 px-6 text-center">
-
-
-          <h1 className="mt-5 text-5xl font-black text-white md:text-7xl">
-            Explore Our Destinations
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-300">
-            Luxury holidays, premium hotels and unforgettable experiences
-            carefully selected for every traveler.
+        <div className="relative mx-auto max-w-3xl">
+          <p className="text-sm font-bold uppercase text-red-500">
+            {labels.eyebrow}
           </p>
-
+          <h1 className="mt-3 text-2xl font-bold uppercase tracking-wide sm:text-4xl">
+            {labels.heading}
+          </h1>
+          <p className="mx-auto mt-5 max-w-xl text-gray-300">{labels.intro}</p>
         </div>
       </section>
 
-      <div className="mx-auto max-w-7xl px-6 py-20">
+      {/* Cards */}
+      <section className="px-5 pb-10 sm:pb-14">
+        <div className="mx-auto flex max-w-6xl flex-wrap justify-center gap-3 sm:gap-5">
+          {items.map((item) => {
+            const inner = (
+              <>
+                {item.image && (
+                  <Image
+                    src={item.image}
+                    alt={item.name}
+                    fill
+                    sizes="(min-width: 1024px) 33vw, 50vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                  />
+                )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
 
-        {/* BACK BUTTON */}
+                <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                  {item.season}
+                </span>
 
-        <div className="mb-12">
-          <Link
-            href="/"
-            className="inline-flex items-center rounded-full border border-neutral-700 px-6 py-3 text-white transition hover:border-red-500 hover:text-red-500"
+                <div className="absolute inset-x-0 bottom-0 p-4 sm:p-5">
+                  <h2 className="break-words text-[15px] font-extrabold uppercase leading-tight sm:text-2xl sm:tracking-wide lg:text-3xl">
+                    {item.name}
+                  </h2>
+                  <p className="mt-1 line-clamp-3 text-xs text-gray-300 sm:line-clamp-none sm:text-sm">
+                    {item.description}
+                  </p>
+                  <div className="mt-3 flex items-center gap-3 text-sm font-bold">
+                    {item.price && (
+                      <span className="text-red-500">{item.price}</span>
+                    )}
+                    <span className="flex items-center gap-1 transition group-hover:gap-2">
+                      {item.href ? labels.explore : labels.ask}
+                      <ArrowRight size={16} />
+                    </span>
+                  </div>
+                </div>
+              </>
+            );
+
+            return item.href ? (
+              <Link key={item.name} href={item.href} className={cardClass}>
+                {inner}
+              </Link>
+            ) : (
+              <a
+                key={item.name}
+                href={whatsappLink(item.name)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cardClass}
+              >
+                {inner}
+              </a>
+            );
+          })}
+        </div>
+      </section>
+
+      {/* More countries */}
+      <section className="bg-gradient-to-b from-black via-neutral-950 to-black px-5 pb-16 pt-10 text-center sm:pb-24 sm:pt-14">
+        <div className="mx-auto max-w-2xl">
+          <h2 className="text-3xl font-extrabold uppercase tracking-wide sm:text-4xl">
+            {labels.moreHeading}
+          </h2>
+          <p className="mt-4 text-gray-400">{labels.moreText}</p>
+
+          <div className="mt-8 flex flex-wrap justify-center gap-2">
+            {moreDestinations.map((name) => (
+              <a
+                key={name}
+                href={whatsappLink(name)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="rounded-full border border-white/15 bg-neutral-900 px-5 py-2.5 text-sm font-bold transition hover:border-red-500/60 hover:bg-red-600"
+              >
+                {name}
+              </a>
+            ))}
+          </div>
+
+          <a
+            href={whatsappLink("një destinacion tjetër")}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-10 inline-flex items-center gap-2 rounded-full bg-red-600 px-9 py-3.5 font-bold transition hover:bg-red-700"
           >
-            ← Back to Home
-          </Link>
+            <MessageCircle size={18} />
+            {labels.cta}
+          </a>
         </div>
-
-        {/* STATS */}
-
-        <div className="mb-20 flex flex-wrap justify-center gap-12 text-center">
-
-          <div>
-            <p className="text-4xl font-black text-red-500">
-              500+
-            </p>
-
-            <p className="mt-2 text-gray-400">
-              Destinations
-            </p>
-          </div>
-
-          <div>
-            <p className="text-4xl font-black text-red-500">
-              500+
-            </p>
-
-            <p className="mt-2 text-gray-400">
-              Luxury Hotels
-            </p>
-          </div>
-
-          <div>
-            <p className="text-4xl font-black text-red-500">
-              24/7
-            </p>
-
-            <p className="mt-2 text-gray-400">
-              Customer Support
-            </p>
-          </div>
-
-        </div>
-
-        {/* DESTINATIONS */}
-
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
-
-          {destinations.map((destination) => (
-
-            <Link
-              key={destination.name}
-              href={destination.link}
-              className="group overflow-hidden rounded-3xl border border-neutral-800 bg-neutral-900 transition-all duration-500 hover:-translate-y-4 hover:border-red-500 hover:shadow-2xl hover:shadow-red-600/20"
-            >
-
-              <div className="relative overflow-hidden">
-
-                <img
-                  src={destination.image}
-                  alt={destination.name}
-                  className="h-80 w-full object-cover transition duration-700 group-hover:scale-110"
-                />
-
-                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/10 to-transparent" />
-
-                <div className="absolute left-5 top-5 rounded-full bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white">
-                  {destination.badge}
-                </div>
-
-              </div>
-
-              <div className="p-8">
-
-                <h2 className="text-3xl font-black text-white">
-                  {destination.name}
-                </h2>
-
-                <p className="mt-4 leading-7 text-gray-400">
-                  {destination.hotels}
-                </p>
-
-                <div className="mt-8 inline-flex items-center gap-2 rounded-full bg-red-600 px-7 py-3 font-semibold text-white transition group-hover:bg-red-700">
-                  Explore Destination
-                  <span className="transition group-hover:translate-x-1">
-                    →
-                  </span>
-                </div>
-
-              </div>
-
-            </Link>
-
-          ))}
-
-        </div>
-
-      </div>
-
+      </section>
     </main>
   );
 }
