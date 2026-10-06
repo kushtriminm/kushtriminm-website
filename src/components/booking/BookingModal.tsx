@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { MessageCircle, Minus, Plus, X } from "lucide-react";
-import { allHotels as hotels } from "@/data/all-hotels";
+import { allHotels, type Country } from "@/data/all-hotels";
 import { boardLabels, type Board } from "@/data/hotel-pricing";
 import {
   addDays,
@@ -52,20 +52,28 @@ function problemText(quote: Extract<Quote, { ok: false }>) {
   }
 }
 
-const regions = Array.from(new Set(hotels.map((hotel) => hotel.region)));
+// Groups hotels by place. If a country is given, only that country's hotels.
+function makeGroups(country?: Country): DropdownGroup[] {
+  const list = country
+    ? allHotels.filter((hotel) => hotel.country === country)
+    : allHotels;
+  const regions = Array.from(new Set(list.map((hotel) => hotel.region)));
 
-const hotelGroups: DropdownGroup[] = regions.map((region) => ({
-  label: region,
-  options: hotels
-    .filter((hotel) => hotel.region === region)
-    .map((hotel) => ({ value: hotel.slug, label: hotel.name })),
-}));
+  return regions.map((region) => ({
+    label: region,
+    options: list
+      .filter((hotel) => hotel.region === region)
+      .map((hotel) => ({ value: hotel.slug, label: hotel.name })),
+  }));
+}
 
 const fieldClass =
   "w-full rounded-xl border border-white/10 bg-black px-4 py-3 text-white outline-none [color-scheme:dark] focus:border-red-500";
 
 const roundButton =
   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-red-600 disabled:opacity-30";
+
+const tag = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-400";
 
 function Stepper({
   label,
@@ -108,10 +116,13 @@ function Stepper({
   );
 }
 
+type OpenDetail = { slug?: string; country?: Country } | string | undefined;
+
 export default function BookingModal() {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [today, setToday] = useState("");
+  const [country, setCountry] = useState<Country | undefined>(undefined);
   const [slug, setSlug] = useState("");
   const [checkIn, setCheckIn] = useState("");
   const [nights, setNights] = useState(3);
@@ -121,9 +132,12 @@ export default function BookingModal() {
 
   useEffect(() => {
     function onOpen(event: Event) {
-      const detail = (event as CustomEvent<string | undefined>).detail;
+      const detail = (event as CustomEvent<OpenDetail>).detail;
+      const opts = typeof detail === "string" ? { slug: detail } : detail ?? {};
+
       setToday(new Date().toISOString().slice(0, 10));
-      setSlug(detail ?? "");
+      setCountry(opts.country);
+      setSlug(opts.slug ?? "");
       setIsOpen(true);
       document.body.style.overflow = "hidden";
       dialogRef.current?.showModal();
@@ -133,7 +147,8 @@ export default function BookingModal() {
     return () => window.removeEventListener("open-booking", onOpen);
   }, []);
 
-  const hotel = hotels.find((item) => item.slug === slug);
+  const hotelGroups = makeGroups(country);
+  const hotel = allHotels.find((item) => item.slug === slug);
   const boards = hotel ? boardsFor(hotel.slug) : [];
   const activeBoard = boards.includes(board) ? board : boards[0];
   const checkOut = checkIn ? addDays(checkIn, nights) : "";
@@ -204,9 +219,7 @@ export default function BookingModal() {
           <div className="mt-5 space-y-4">
             {/* Hotel */}
             <div>
-              <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-400">
-                {labels.hotel}
-              </p>
+              <p className={tag}>{labels.hotel}</p>
               <Dropdown
                 value={slug}
                 onChange={setSlug}
@@ -223,9 +236,7 @@ export default function BookingModal() {
                 {/* Dates */}
                 <div className="grid gap-3 sm:grid-cols-2">
                   <div>
-                    <label className="mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-400">
-                      {labels.checkIn}
-                    </label>
+                    <label className={tag}>{labels.checkIn}</label>
                     <input
                       type="date"
                       min={today}
@@ -236,9 +247,7 @@ export default function BookingModal() {
                   </div>
 
                   <div>
-                    <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-400">
-                      {labels.nights}
-                    </p>
+                    <p className={tag}>{labels.nights}</p>
                     <Stepper
                       label={checkOut ? `→ ${formatDate(checkOut)}` : labels.checkOut}
                       value={nights}
@@ -251,9 +260,7 @@ export default function BookingModal() {
 
                 {/* Service */}
                 <div>
-                  <p className="mb-1.5 text-xs font-bold uppercase tracking-wider text-gray-400">
-                    {labels.service}
-                  </p>
+                  <p className={tag}>{labels.service}</p>
                   <div className="flex flex-wrap gap-2">
                     {boards.map((b) => (
                       <button
@@ -345,18 +352,14 @@ export default function BookingModal() {
                       <p className="text-xs font-bold uppercase tracking-wider text-gray-400">
                         {labels.total}
                       </p>
-                      <p className="mt-1 text-3xl font-extrabold">
-                        {quote.total}€
-                      </p>
+                      <p className="mt-1 text-3xl font-extrabold">{quote.total}€</p>
                       <p className="mt-1 text-xs text-gray-400">
                         {quote.nights} net · {adults} {labels.adults.toLowerCase()}
                         {childAges.length > 0
                           ? ` · ${childAges.length} ${labels.children.toLowerCase()}`
                           : ""}
                       </p>
-                      <p className="mt-2 text-xs text-gray-500">
-                        {labels.disclaimer}
-                      </p>
+                      <p className="mt-2 text-xs text-gray-500">{labels.disclaimer}</p>
                     </div>
                   ) : (
                     <p className="rounded-2xl bg-black p-4 text-sm text-gray-300">

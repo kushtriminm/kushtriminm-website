@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Check, ChevronDown, MapPin, MessageCircle, Star } from "lucide-react";
+import { ArrowRight, ChevronDown, MapPin, MessageCircle, Star } from "lucide-react";
 import { allHotels } from "@/data/all-hotels";
 import type { DestinationPage } from "@/data/destination-pages";
 import { fromPrice } from "@/lib/booking";
@@ -11,12 +11,11 @@ import ScrollRow from "@/components/booking/ScrollRow";
 
 // All the words in this template. Change them here.
 const labels = {
-  discover: "Zbulo",
   hotelsEyebrow: "Hotelet tona",
   hotelsTitle: "Hotele të zgjedhura",
   allHotels: "Shiko të gjitha hotelet",
-  experiencesEyebrow: "Përtej resortit",
-  experiencesTitle: "Përvoja",
+  activitiesEyebrow: "Gjatë pushimit",
+  activitiesTitle: "Aktivitete",
   faqTitle: "Pyetje të shpeshta",
   ctaTitle: "Gati për",
   ctaText: "Na thuaj ku dëshiron të shkosh dhe ne merremi me pjesën tjetër: fluturime, hotel dhe asistencë.",
@@ -37,15 +36,22 @@ const wa = (text: string) =>
 const photoCard =
   "group relative aspect-[4/5] w-[72%] shrink-0 snap-center overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-neutral-800 to-neutral-950 transition duration-300 hover:border-red-500/60 hover:shadow-[0_0_40px_rgba(220,38,38,0.25)] md:aspect-[3/4] md:w-[calc((100%_-_3rem)/4)] md:snap-start";
 
+const section = "px-5 py-14 sm:py-20";
+const sectionAlt =
+  "bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-14 sm:py-20";
+const h2 = "text-2xl font-extrabold uppercase tracking-wide sm:text-4xl";
+
 export default function DestinationPageView({ data }: { data: DestinationPage }) {
   const hotels = allHotels.filter((hotel) => hotel.country === data.country);
   const hasHotels = hotels.length > 0;
+  const areas = data.areas ?? [];
+  const experiences = data.experiences ?? [];
   const message = `Përshëndetje! Jam i interesuar për ${data.title}.`;
 
   return (
     <main className="bg-black text-white">
       {/* Hero */}
-      <section className="relative flex min-h-[72svh] items-end overflow-hidden px-5 pb-12 pt-36 sm:min-h-[80svh] sm:items-center sm:pb-16">
+      <section className="relative flex min-h-[64svh] items-end overflow-hidden px-5 pb-12 pt-36 sm:min-h-[72svh] sm:items-center sm:pb-16">
         <Image
           src={data.heroImage}
           alt={data.title}
@@ -63,16 +69,12 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-gray-200 sm:text-lg">{data.tagline}</p>
 
-          <div className="mt-6">
-            <span className="inline-block rounded-full bg-red-600/20 px-3 py-1 text-xs font-bold uppercase text-red-400">
-              {data.season}
-            </span>
-            <p className="mx-auto mt-2 max-w-md text-xs text-gray-400">{data.seasonNote}</p>
-          </div>
-
           <div className="mx-auto mt-8 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center">
             {hasHotels ? (
-              <BookButton className="rounded-full bg-red-600 px-8 py-3.5 font-bold text-white transition hover:bg-red-700">
+              <BookButton
+                country={data.country}
+                className="rounded-full bg-red-600 px-8 py-3.5 font-bold text-white transition hover:bg-red-700"
+              >
                 {labels.bookHotel}
               </BookButton>
             ) : (
@@ -95,57 +97,21 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
         </div>
       </section>
 
-      {/* Overview */}
-      <section className="px-5 py-14 sm:py-20">
-        <div
-          className={`mx-auto grid max-w-6xl items-center gap-8 ${
-            data.aboutImage ? "lg:grid-cols-2 lg:gap-14" : "max-w-3xl text-center"
-          }`}
-        >
-          {data.aboutImage && (
-            <div className="relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10">
-              <Image
-                src={data.aboutImage}
-                alt={data.title}
-                fill
-                sizes="(min-width: 1024px) 50vw, 100vw"
-                className="object-cover"
-              />
-            </div>
-          )}
-
-          <div>
-            <p className="text-sm font-bold uppercase text-red-500">
-              {labels.discover} {data.title}
-            </p>
-            <h2 className="mt-3 text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
-              {data.overviewTitle}
-            </h2>
-            <p className="mt-4 leading-8 text-gray-300">{data.overview}</p>
-
-            <ul className={`mt-6 grid grid-cols-2 gap-3 ${data.aboutImage ? "" : "text-left"}`}>
-              {data.highlights.map((item) => (
-                <li key={item} className="flex gap-2 rounded-2xl bg-neutral-900 px-4 py-3 text-sm font-bold">
-                  <Check size={16} className="mt-0.5 shrink-0 text-red-500" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
-
       {/* Areas */}
-      {data.areas && data.areas.length > 0 && (
-        <section className="bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-14 sm:py-20">
+      {areas.length > 0 && (
+        <section className={section}>
           <div className="mx-auto max-w-6xl">
-            <h2 className="mb-8 text-center text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
-              {data.areasTitle}
-            </h2>
+            <h2 className={`mb-8 text-center ${h2}`}>{data.areasTitle}</h2>
             <ScrollRow>
-              {data.areas.map((area) => (
+              {areas.map((area) => (
                 <div key={area.name} className={photoCard}>
-                  <Image src={area.image} alt={area.name} fill sizes="(min-width: 768px) 25vw, 72vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                  <Image
+                    src={area.image}
+                    alt={area.name}
+                    fill
+                    sizes="(min-width: 768px) 25vw, 72vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-5">
                     <h3 className="text-2xl font-extrabold uppercase tracking-wide">{area.name}</h3>
@@ -161,13 +127,11 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
 
       {/* Hotels */}
       {hasHotels && (
-        <section className="px-5 py-14 sm:py-20">
+        <section className={areas.length > 0 ? sectionAlt : section}>
           <div className="mx-auto max-w-6xl">
             <div className="mb-8 text-center">
               <p className="text-sm font-bold uppercase text-red-500">{labels.hotelsEyebrow}</p>
-              <h2 className="mt-3 text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
-                {labels.hotelsTitle}
-              </h2>
+              <h2 className={`mt-3 ${h2}`}>{labels.hotelsTitle}</h2>
             </div>
 
             <ScrollRow>
@@ -182,7 +146,13 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
                   >
                     <div className="relative aspect-[4/3] bg-gradient-to-br from-neutral-800 to-neutral-950">
                       {photo && (
-                        <Image src={photo} alt={hotel.name} fill sizes="(min-width: 768px) 33vw, 78vw" className="object-cover transition duration-500 group-hover:scale-105" />
+                        <Image
+                          src={photo}
+                          alt={hotel.name}
+                          fill
+                          sizes="(min-width: 768px) 33vw, 78vw"
+                          className="object-cover transition duration-500 group-hover:scale-105"
+                        />
                       )}
                       <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                     </div>
@@ -224,6 +194,7 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
                         </Link>
                         <BookButton
                           slug={hotel.slug}
+                          country={data.country}
                           className="rounded-full bg-red-600 py-3 text-sm font-bold text-white transition hover:bg-red-700"
                         >
                           {labels.book}
@@ -237,7 +208,10 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
 
             <p className="mt-1 text-center text-xs text-gray-500 md:hidden">{labels.swipe} &rarr;</p>
             <div className="mt-6 text-center">
-              <Link href="/hotels" className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-400">
+              <Link
+                href="/hotels"
+                className="inline-flex items-center gap-2 text-sm font-bold text-red-500 hover:text-red-400"
+              >
                 {labels.allHotels}
                 <ArrowRight size={16} />
               </Link>
@@ -246,20 +220,24 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
         </section>
       )}
 
-      {/* Experiences */}
-      {data.experiences && data.experiences.length > 0 && (
-        <section className="bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-14 sm:py-20">
+      {/* Activities */}
+      {experiences.length > 0 && (
+        <section className={hasHotels && areas.length > 0 ? section : sectionAlt}>
           <div className="mx-auto max-w-6xl">
             <div className="mb-8 text-center">
-              <p className="text-sm font-bold uppercase text-red-500">{labels.experiencesEyebrow}</p>
-              <h2 className="mt-3 text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
-                {labels.experiencesTitle}
-              </h2>
+              <p className="text-sm font-bold uppercase text-red-500">{labels.activitiesEyebrow}</p>
+              <h2 className={`mt-3 ${h2}`}>{labels.activitiesTitle}</h2>
             </div>
             <ScrollRow>
-              {data.experiences.map((item) => (
+              {experiences.map((item) => (
                 <div key={item.title} className={photoCard}>
-                  <Image src={item.image} alt={item.title} fill sizes="(min-width: 768px) 25vw, 72vw" className="object-cover transition duration-700 group-hover:scale-105" />
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(min-width: 768px) 25vw, 72vw"
+                    className="object-cover transition duration-700 group-hover:scale-105"
+                  />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent" />
                   <div className="absolute inset-x-0 bottom-0 p-5">
                     <h3 className="text-xl font-extrabold uppercase tracking-wide">{item.title}</h3>
@@ -274,11 +252,9 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
       )}
 
       {/* FAQ */}
-      <section className="px-5 py-14 sm:py-20">
+      <section className={section}>
         <div className="mx-auto max-w-3xl">
-          <h2 className="mb-8 text-center text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
-            {labels.faqTitle}
-          </h2>
+          <h2 className={`mb-8 text-center ${h2}`}>{labels.faqTitle}</h2>
           <div className="space-y-3">
             {data.faq.map((item) => (
               <details
@@ -300,7 +276,7 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
       <section className="relative overflow-hidden px-5 pb-24 pt-8 text-center sm:pb-32">
         <div className="pointer-events-none absolute left-1/2 top-0 h-56 w-[28rem] -translate-x-1/2 rounded-full bg-red-600/15 blur-3xl" />
         <div className="relative mx-auto max-w-xl">
-          <h2 className="text-2xl font-extrabold uppercase tracking-wide sm:text-4xl">
+          <h2 className={h2}>
             {labels.ctaTitle} {data.title}?
           </h2>
           <p className="mt-4 text-gray-400">{labels.ctaText}</p>
