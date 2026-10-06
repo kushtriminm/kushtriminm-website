@@ -11,8 +11,9 @@ import Dropdown, { type DropdownGroup } from "./Dropdown";
 // All the words in this form. Change them here.
 const labels = {
   step1: "Ku dëshiron të shkosh?",
-  step2: "Zgjidh hotelin",
+  step2: "Hoteli dhe shërbimi",
   step3: "Datat dhe udhëtarët",
+  summary: "Përmbledhja",
   chooseHotel: "Zgjidh hotelin",
   searchHotel: "Kërko hotelin...",
   noHotel: "Nuk u gjet asnjë hotel",
@@ -21,7 +22,7 @@ const labels = {
   checkIn: "Data e nisjes (opsionale)",
   nights: "Sa net",
   checkOut: "Kthimi",
-  service: "Shërbimi (opsionale)",
+  service: "Service (optional)",
   adults: "Të rritur",
   children: "Fëmijë",
   addChild: "Shto fëmijë",
@@ -32,6 +33,12 @@ const labels = {
     "Çmim orientues. Disponueshmërinë dhe çmimin final i konfirmojmë ne në WhatsApp.",
   send: "Kërko ofertë në WhatsApp",
   pickFirst: "Zgjidh destinacionin për të vazhduar",
+  rowDestination: "Destinacioni",
+  rowHotel: "Hoteli",
+  rowDates: "Data",
+  rowService: "Service",
+  rowGuests: "Udhëtarët",
+  notSet: "—",
 };
 
 // image: optional photo. Without one the tile gets a dark red background.
@@ -53,7 +60,7 @@ const tag = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-4
 const round =
   "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-red-600 disabled:opacity-30";
 const card =
-  "rounded-3xl border border-white/10 bg-gradient-to-b from-neutral-900 to-neutral-950 p-5 sm:p-6";
+  "rounded-3xl border border-white/10 bg-gradient-to-b from-neutral-900 to-neutral-950 p-4 sm:p-6";
 
 const subscribe = () => () => {};
 function getToday() {
@@ -91,12 +98,21 @@ function Stepper({
 
 function StepTitle({ n, children }: { n: number; children: string }) {
   return (
-    <h3 className="mb-5 flex items-center gap-3 text-base font-extrabold uppercase tracking-wide sm:text-lg">
-      <span className="flex h-8 w-8 items-center justify-center rounded-full bg-red-600 text-sm shadow-lg shadow-red-900/40">
+    <h3 className="mb-5 flex items-center gap-3 text-base font-extrabold uppercase tracking-wide">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-sm shadow-lg shadow-red-900/40">
         {n}
       </span>
       {children}
     </h3>
+  );
+}
+
+function Row({ name, value }: { name: string; value: string }) {
+  return (
+    <div className="flex justify-between gap-4 border-b border-white/5 py-2 text-sm last:border-0">
+      <span className="text-gray-400">{name}</span>
+      <span className="text-right font-bold">{value}</span>
+    </div>
   );
 }
 
@@ -154,6 +170,10 @@ export default function RequestForm() {
     );
   }
 
+  const guestsText = `${adults} ${labels.adults.toLowerCase()}${
+    childAges.length > 0 ? `, ${childAges.length} ${labels.children.toLowerCase()}` : ""
+  }`;
+
   const message = [
     "Përshëndetje! Dua një ofertë:",
     dest ? `Destinacioni: ${dest.label} (${dest.sub})` : "",
@@ -176,10 +196,10 @@ export default function RequestForm() {
 
   return (
     <div className="space-y-5">
-      {/* Step 1 */}
+      {/* Step 1: destinations in one horizontal row */}
       <div className={card}>
         <StepTitle n={1}>{labels.step1}</StepTitle>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-7 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
           {destinations.map((d) => {
             const selected = destId === d.id;
             return (
@@ -188,7 +208,7 @@ export default function RequestForm() {
                 type="button"
                 onClick={() => pickDestination(d.id)}
                 aria-pressed={selected}
-                className={`group relative aspect-[4/3] overflow-hidden rounded-2xl border text-left transition duration-300 ${
+                className={`group relative aspect-[3/4] w-[36%] shrink-0 snap-center overflow-hidden rounded-2xl border text-left transition duration-300 sm:w-[24%] lg:w-auto ${
                   selected
                     ? "border-red-500 ring-2 ring-red-500 shadow-[0_0_30px_rgba(220,38,38,0.35)]"
                     : "border-white/10 hover:border-red-500/60"
@@ -199,18 +219,18 @@ export default function RequestForm() {
                     src={d.image}
                     alt={d.label}
                     fill
-                    sizes="(min-width: 640px) 220px, 45vw"
+                    sizes="(min-width: 1024px) 150px, 36vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
                   />
                 )}
-                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                 {selected && (
                   <span className="absolute right-2 top-2 flex h-6 w-6 items-center justify-center rounded-full bg-red-600">
                     <Check size={14} />
                   </span>
                 )}
                 <span className="absolute inset-x-0 bottom-0 p-3">
-                  <span className="block text-sm font-extrabold uppercase tracking-wide sm:text-base">
+                  <span className="block text-sm font-extrabold uppercase tracking-wide">
                     {d.label}
                   </span>
                   <span className="block text-xs text-gray-300">{d.sub}</span>
@@ -221,49 +241,35 @@ export default function RequestForm() {
         </div>
       </div>
 
+      {!dest && (
+        <span className="flex items-center justify-center gap-2 rounded-full bg-white/10 py-4 text-sm font-bold text-gray-400">
+          <MessageCircle size={18} />
+          {labels.pickFirst}
+        </span>
+      )}
+
       {dest && (
-        <>
+        <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
           {/* Step 2 */}
           <div className={card}>
             <StepTitle n={2}>{labels.step2}</StepTitle>
-            {countryHotels.length > 0 ? (
-              <Dropdown
-                value={slug}
-                onChange={setSlug}
-                groups={hotelGroups}
-                placeholder={labels.chooseHotel}
-                searchable
-                searchPlaceholder={labels.searchHotel}
-                emptyText={labels.noHotel}
-              />
-            ) : (
-              <>
-                <label className={tag}>{labels.placeLabel}</label>
-                <input type="text" value={place} onChange={(e) => setPlace(e.target.value)} className={field} />
-              </>
-            )}
-          </div>
-
-          {/* Step 3 */}
-          <div className={card}>
-            <StepTitle n={3}>{labels.step3}</StepTitle>
-            <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-2">
+            <div className="space-y-5">
+              {countryHotels.length > 0 ? (
+                <Dropdown
+                  value={slug}
+                  onChange={setSlug}
+                  groups={hotelGroups}
+                  placeholder={labels.chooseHotel}
+                  searchable
+                  searchPlaceholder={labels.searchHotel}
+                  emptyText={labels.noHotel}
+                />
+              ) : (
                 <div>
-                  <label className={tag}>{labels.checkIn}</label>
-                  <input type="date" min={today} value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className={field} />
+                  <label className={tag}>{labels.placeLabel}</label>
+                  <input type="text" value={place} onChange={(e) => setPlace(e.target.value)} className={field} />
                 </div>
-                <div>
-                  <p className={tag}>{labels.nights}</p>
-                  <Stepper
-                    label={checkOut ? `→ ${formatDate(checkOut)}` : labels.checkOut}
-                    value={nights}
-                    min={1}
-                    max={30}
-                    onChange={setNights}
-                  />
-                </div>
-              </div>
+              )}
 
               <div>
                 <p className={tag}>{labels.service}</p>
@@ -283,6 +289,28 @@ export default function RequestForm() {
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div className={card}>
+            <StepTitle n={3}>{labels.step3}</StepTitle>
+            <div className="space-y-4">
+              <div>
+                <label className={tag}>{labels.checkIn}</label>
+                <input type="date" min={today} value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className={field} />
+              </div>
+
+              <div>
+                <p className={tag}>{labels.nights}</p>
+                <Stepper
+                  label={checkOut ? `→ ${formatDate(checkOut)}` : labels.checkOut}
+                  value={nights}
+                  min={1}
+                  max={30}
+                  onChange={setNights}
+                />
               </div>
 
               <div className="space-y-2">
@@ -329,36 +357,44 @@ export default function RequestForm() {
 
               <div>
                 <label className={tag}>{labels.notes}</label>
-                <textarea rows={3} value={notes} onChange={(e) => setNotes(e.target.value)} className={field} />
+                <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} className={field} />
               </div>
             </div>
           </div>
 
-          {quote && quote.ok && (
-            <div className="rounded-3xl border border-red-500/50 bg-gradient-to-br from-red-600/20 to-red-950/20 p-5 shadow-[0_0_40px_rgba(220,38,38,0.2)] sm:p-6">
-              <p className="text-xs font-bold uppercase tracking-wider text-gray-300">{labels.total}</p>
-              <p className="mt-1 text-4xl font-extrabold">{quote.total}€</p>
-              <p className="mt-2 text-xs text-gray-400">{labels.disclaimer}</p>
+          {/* Step 4: summary + send (stays visible on desktop while scrolling) */}
+          <div className="space-y-4 lg:sticky lg:top-28">
+            <div className={card}>
+              <h3 className="mb-3 text-base font-extrabold uppercase tracking-wide">{labels.summary}</h3>
+              <Row name={labels.rowDestination} value={dest.label} />
+              <Row name={labels.rowHotel} value={hotel?.name ?? (place || labels.notSet)} />
+              <Row
+                name={labels.rowDates}
+                value={checkIn ? `${formatDate(checkIn)} → ${formatDate(checkOut)}` : labels.notSet}
+              />
+              <Row name={labels.rowService} value={activeBoard ? boardLabels[activeBoard] : labels.notSet} />
+              <Row name={labels.rowGuests} value={guestsText} />
             </div>
-          )}
-        </>
-      )}
 
-      {dest ? (
-        <a
-          href={href}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center justify-center gap-2 rounded-full bg-red-600 py-4 text-lg font-bold text-white shadow-lg shadow-red-900/40 transition hover:bg-red-700"
-        >
-          <MessageCircle size={20} />
-          {labels.send}
-        </a>
-      ) : (
-        <span className="flex items-center justify-center gap-2 rounded-full bg-white/10 py-4 text-sm font-bold text-gray-500">
-          <MessageCircle size={18} />
-          {labels.pickFirst}
-        </span>
+            {quote && quote.ok && (
+              <div className="rounded-3xl border border-red-500/50 bg-gradient-to-br from-red-600/20 to-red-950/20 p-5 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
+                <p className="text-xs font-bold uppercase tracking-wider text-gray-300">{labels.total}</p>
+                <p className="mt-1 text-4xl font-extrabold">{quote.total}€</p>
+                <p className="mt-2 text-xs text-gray-400">{labels.disclaimer}</p>
+              </div>
+            )}
+
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 rounded-full bg-red-600 py-4 text-lg font-bold text-white shadow-lg shadow-red-900/40 transition hover:bg-red-700"
+            >
+              <MessageCircle size={20} />
+              {labels.send}
+            </a>
+          </div>
+        </div>
       )}
     </div>
   );

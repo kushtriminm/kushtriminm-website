@@ -3,12 +3,22 @@ import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
+// All the words in the footer. Change them here.
+const labels = {
+  tagline:
+    "Pushime, fluturime, hotele dhe udhëtime me autobus, të organizuara personalisht nga Gjakova.",
+  explore: "Faqet",
+  contact: "Kontakt",
+  whatsapp: "Na shkruaj në WhatsApp",
+  rights: "Të gjitha të drejtat e rezervuara.",
+};
+
 const links = [
-  { name: "Home", href: "/" },
-  { name: "Destinations", href: "/destinations" },
-  { name: "Hotels", href: "/hotels" },
-  { name: "About", href: "/about" },
-  { name: "Contact", href: "/contact" },
+  { name: "Destinacionet", href: "/destinations" },
+  { name: "Hotelet", href: "/hotels" },
+  { name: "Rezervo", href: "/book" },
+  { name: "Rreth nesh", href: "/about" },
+  { name: "Kontakt", href: "/contact" },
 ];
 
 const socials = [
@@ -29,22 +39,21 @@ const directionsUrl =
 
 export default function Footer() {
   return (
-    <footer className="bg-black text-white">
-      <div className="mx-auto max-w-7xl px-6 py-14 sm:py-16">
-        <div className="grid gap-10 md:grid-cols-3">
+    <footer className="border-t border-white/10 bg-black text-white">
+      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-6 sm:py-14">
+        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-[1.4fr_1fr_1.4fr]">
           {/* Brand */}
-          <div>
+          <div className="col-span-2 md:col-span-1">
             <Image
               src="/images/Logo.png"
               alt="Kushtrimi NM Worldwide"
               width={220}
               height={80}
-              className="h-auto w-[180px]"
+              className="h-auto w-[150px] sm:w-[180px]"
             />
 
-            <p className="mt-5 max-w-sm leading-7 text-gray-400">
-              Holidays, flights, hotels and bus tours, arranged personally from
-              Gjakov&euml;.
+            <p className="mt-4 max-w-sm text-sm leading-7 text-gray-400">
+              {labels.tagline}
             </p>
 
             <div className="mt-5 flex gap-3">
@@ -69,9 +78,11 @@ export default function Footer() {
 
           {/* Links */}
           <div>
-            <h3 className="text-lg font-bold">Explore</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+              {labels.explore}
+            </h3>
 
-            <div className="mt-5 flex flex-col gap-3 text-gray-400">
+            <div className="mt-4 flex flex-col gap-3 text-sm text-gray-400">
               {links.map((link) => (
                 <Link
                   key={link.href}
@@ -86,22 +97,24 @@ export default function Footer() {
 
           {/* Contact */}
           <div>
-            <h3 className="text-lg font-bold">Contact</h3>
+            <h3 className="text-sm font-bold uppercase tracking-wider text-white">
+              {labels.contact}
+            </h3>
 
-            <div className="mt-5 space-y-4 text-gray-400">
+            <div className="mt-4 space-y-3 text-sm text-gray-400">
               <a
                 href="tel:+38349833888"
                 className="flex items-center gap-3 transition hover:text-white"
               >
-                <Phone size={18} className="shrink-0 text-red-500" />
+                <Phone size={16} className="shrink-0 text-red-500" />
                 +383 49 833 888
               </a>
 
               <a
                 href="mailto:info@kushtriminm.com"
-                className="flex items-center gap-3 transition hover:text-white"
+                className="flex items-center gap-3 break-all transition hover:text-white"
               >
-                <Mail size={18} className="shrink-0 text-red-500" />
+                <Mail size={16} className="shrink-0 text-red-500" />
                 info@kushtriminm.com
               </a>
 
@@ -111,8 +124,8 @@ export default function Footer() {
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 transition hover:text-white"
               >
-                <MapPin size={18} className="shrink-0 text-red-500" />
-                Xheladin Hana, Gjakov&euml;
+                <MapPin size={16} className="shrink-0 text-red-500" />
+                Xheladin Hana, Gjakovë
               </a>
             </div>
 
@@ -120,16 +133,15 @@ export default function Footer() {
               href="https://wa.me/38349833888"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-block rounded-full bg-red-600 px-7 py-3 font-semibold text-white transition hover:bg-red-700"
+              className="mt-5 inline-block rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
             >
-              WhatsApp us
+              {labels.whatsapp}
             </a>
           </div>
         </div>
 
-        <div className="mt-12 border-t border-neutral-900 pt-6 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. All rights
-          reserved.
+        <div className="mt-10 border-t border-neutral-900 pt-6 text-center text-xs text-gray-500 sm:text-sm">
+          &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. {labels.rights}
         </div>
       </div>
     </footer>

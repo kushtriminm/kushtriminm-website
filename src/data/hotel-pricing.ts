@@ -30,17 +30,17 @@
 //     ],
 //   },
 
-export type Board = "ro" | "bb" | "hb" | "fb" | "ai";
-
+export type Board = "ro" | "bb" | "hb" | "fb" | "ai" | "uai";
 export const boardLabels: Record<Board, string> = {
-  ro: "Vetëm fjetje",
-  bb: "Me mëngjes",
-  hb: "Gjysmë pansion",
-  fb: "Pansion i plotë",
+  ro: "Room only",
+  bb: "Bed & breakfast",
+  hb: "Half board",
+  fb: "Full board",
   ai: "All inclusive",
+  uai: "Ultra all inclusive",
 };
 
-export const allBoards: Board[] = ["ro", "bb", "hb", "fb", "ai"];
+export const allBoards: Board[] = ["ro", "bb", "hb", "fb", "ai", "uai"];
 
 export type ChildRule = {
   fromAge: number;

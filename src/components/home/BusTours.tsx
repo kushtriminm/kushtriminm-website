@@ -157,7 +157,7 @@ export default function BusTours() {
 
   const cityObj = departureCities.find((c) => c.name === selectedCity);
   const displayTime = cityObj ? getCityTime(selected?.slug, cityObj.name, cityObj.time) : "";
-  const freqText = selected?.slug === "budapest-vienna" ? "Çdo të Enjte" : selected?.slug === "istanbul" ? "Çdo të Mërkurë" : "";
+  const freqText = selected?.slug === "budapest-vienna" ? "Çdo të Enjte" : selected?.slug === "stambolli" ? "Çdo të Mërkurë" : "";
 
   const whatsappMessage = selected && selectedDate
     ? `Përshëndetje! Dua të rezervoj udhëtimin për ${selected.title} (${freqText}, Nisja: ${selectedDate.split("-").reverse().join("-")}), nga qyteti: ${selectedCity} (${displayTime}), për ${passengers} person/a. Çmimi total: ${totalPrice}€.`
@@ -178,7 +178,7 @@ export default function BusTours() {
           {tours.map((tour) => {
             const info = priceInfo(tour);
             // Përcaktojmë qartë etiketën për secilin udhëtim (Stamboll -> Çdo të Mërkurë, Budapest -> Çdo të Enjte)
-            const tourFreqLabel = tour.slug === "budapest-vienna" ? "Nisjet: Çdo të Enjte" : tour.slug === "istanbul" ? "Nisjet: Çdo të Mërkurë" : "";
+            const tourFreqLabel = tour.slug === "budapest-vienna" ? "Nisjet: Çdo të Enjte" : tour.slug === "stambolli" ? "Nisjet: Çdo të Mërkurë" : "";
 
             return (
               <article
