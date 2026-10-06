@@ -123,7 +123,6 @@ export default function BusTours() {
     }
     setPassengers(1);
     setIsDropdownOpen(false);
-    document.body.style.overflow = "hidden";
     dialogRef.current?.showModal();
   }
 

@@ -45,13 +45,13 @@ const labels = {
 type Dest = { id: string; label: string; sub: string; country?: Country; image?: string };
 
 const destinations: Dest[] = [
-  { id: "antalya", label: "Antalya", sub: "Turqi", country: "Turkey", image: "/images/destinations/antalya/hero.jpg" },
-  { id: "egypt", label: "Hurghada", sub: "Egjipt", country: "Egypt", image: "/images/destinations/egypt/hero.jpg" },
-  { id: "greece", label: "Greqi", sub: "Ishuj & bregdet", country: "Greece", image: "/images/destinations/greece/hero.jpg" },
-  { id: "albania", label: "Shqipëri", sub: "Bregdet", country: "Albania" },
-  { id: "dubai", label: "Dubai", sub: "Emiratet" },
-  { id: "europe", label: "Evropë", sub: "Qytete" },
-  { id: "other", label: "Tjetër", sub: "Na trego" },
+  { id: "antalya", label: "Antalya", sub: "Turkey", country: "Turkey", image: "/images/destinations/antalya/hero.jpg" },
+  { id: "egypt", label: "Hurghada", sub: "Egypt", country: "Egypt", image: "/images/destinations/egypt/hero.jpg" },
+  { id: "greece", label: "Greece", sub: "Islands & coast", country: "Greece", image: "/images/destinations/greece/hero.jpg" },
+  { id: "europe", label: "Europe", sub: "Cities", image: "/images/destinations/italy/itali.jpg" },
+  { id: "albania", label: "Albania", sub: "Coast", country: "Albania", image: "/images/destinations/albania/albania.jpg" },
+  { id: "dubai", label: "Dubai", sub: "UAE", image: "/images/offers/dubai.jpg" },
+  { id: "other", label: "Other", sub: "Tell us", image: "/images/destinations/switzerland/switzerland.jpg" },
 ];
 
 const field =

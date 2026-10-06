@@ -79,7 +79,6 @@ export default function AboutPage() {
             {story.map((paragraph) => (
   <LightUp key={paragraph}>{paragraph}</LightUp>
 ))}
-
           </div>
         </div>
       </section>

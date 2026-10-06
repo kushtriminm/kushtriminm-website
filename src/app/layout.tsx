@@ -34,11 +34,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="sq">
       <body className="overflow-x-clip bg-black text-white antialiased">
         <Navbar />
 
-        <main>{children}</main>
+        <div>{children}</div>
 
         <Footer />
 

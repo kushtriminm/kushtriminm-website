@@ -11,6 +11,7 @@ const labels = {
   contact: "Kontakt",
   whatsapp: "Na shkruaj në WhatsApp",
   rights: "Të gjitha të drejtat e rezervuara.",
+  designedBy: "Designed by",
 };
 
 const links = [
@@ -34,16 +35,21 @@ const socials = [
   },
 ];
 
+// Put the VISUALEA website or Instagram link in href. Empty = plain text.
+const credit = { name: "VISUALEA", href: "https://www.instagram.com/visualeastudio" };
+
 const directionsUrl =
   "https://www.google.com/maps/search/?api=1&query=42.3768706,20.4321499";
+
+const glow = "font-semibold text-orange-500 [text-shadow:0_0_10px_rgba(249,115,22,0.7)]";
 
 export default function Footer() {
   return (
     <footer className="border-t border-white/10 bg-black text-white">
-      <div className="mx-auto max-w-7xl px-5 py-10 sm:px-6 sm:py-14">
-        <div className="grid grid-cols-2 gap-x-6 gap-y-10 md:grid-cols-[1.4fr_1fr_1.4fr]">
+      <div className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-6 sm:pb-14 sm:pt-14">
+        <div className="grid grid-cols-1 gap-y-9 md:grid-cols-[1.4fr_1fr_1.4fr] md:gap-x-10">
           {/* Brand */}
-          <div className="col-span-2 md:col-span-1">
+          <div>
             <Image
               src="/images/Logo.png"
               alt="Kushtrimi NM Worldwide"
@@ -52,7 +58,7 @@ export default function Footer() {
               className="h-auto w-[150px] sm:w-[180px]"
             />
 
-            <p className="mt-4 max-w-sm text-sm leading-7 text-gray-400">
+            <p className="mt-4 max-w-sm text-sm leading-6 text-gray-400">
               {labels.tagline}
             </p>
 
@@ -76,8 +82,8 @@ export default function Footer() {
             </div>
           </div>
 
-          {/* Links */}
-          <div>
+          {/* Links: desktop only */}
+          <div className="hidden md:block">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">
               {labels.explore}
             </h3>
@@ -112,10 +118,10 @@ export default function Footer() {
 
               <a
                 href="mailto:info@kushtriminm.com"
-                className="flex items-center gap-3 break-all transition hover:text-white"
+                className="flex items-center gap-3 transition hover:text-white"
               >
                 <Mail size={16} className="shrink-0 text-red-500" />
-                info@kushtriminm.com
+                <span className="break-all">info@kushtriminm.com</span>
               </a>
 
               <a
@@ -133,15 +139,32 @@ export default function Footer() {
               href="https://wa.me/38349833888"
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-5 inline-block rounded-full bg-red-600 px-6 py-3 text-sm font-semibold text-white transition hover:bg-red-700"
+              className="mt-5 inline-block whitespace-nowrap rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
             >
               {labels.whatsapp}
             </a>
           </div>
         </div>
 
-        <div className="mt-10 border-t border-neutral-900 pt-6 text-center text-xs text-gray-500 sm:text-sm">
-          &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. {labels.rights}
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-neutral-900 pt-6 text-center text-xs text-gray-500 sm:flex-row sm:text-sm">
+          <p>
+            &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. {labels.rights}
+          </p>
+          <p>
+            {labels.designedBy}{" "}
+            {credit.href ? (
+              <a
+                href={credit.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`${glow} transition hover:text-orange-400`}
+              >
+                {credit.name}
+              </a>
+            ) : (
+              <span className={glow}>{credit.name}</span>
+            )}
+          </p>
         </div>
       </div>
     </footer>

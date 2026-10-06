@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { allHotels } from "@/data/all-hotels";
 import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
-import BookButton from "@/components/booking/BookButton";
 import BookingModal from "@/components/booking/BookingModal";
 import HotelsBrowser, { type HotelCard } from "@/components/booking/HotelsBrowser";
 
@@ -18,7 +17,6 @@ const labels = {
   heading: "Zgjidh hotelin tënd",
   intro:
     "Shfleto hotelet sipas vendit, zgjidh datat dhe numrin e personave, dhe pyet për vende të lira. Çmimet dhe disponueshmërinë i konfirmojmë ne.",
-  bookStay: "Rezervo një qëndrim",
 };
 
 export default function HotelsPage() {
@@ -38,7 +36,7 @@ export default function HotelsPage() {
   return (
     <main className="bg-black text-white">
       <section className="relative overflow-hidden px-5 pb-8 pt-36 text-center sm:pt-44">
-        <div className="pointer-events-none absolute left-1/2 top-24 h-72 w-[30rem] -translate-x-1/2 rounded-full bg-red-600/20 blur-3xl" />
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(220,38,38,0.25),transparent_70%)]" />
 
         <div className="relative mx-auto max-w-3xl">
           <p className="text-sm font-bold uppercase text-red-500">{labels.eyebrow}</p>
@@ -47,9 +45,6 @@ export default function HotelsPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-xl text-gray-300">{labels.intro}</p>
 
-          <BookButton className="mt-7 rounded-full bg-red-600 px-9 py-3.5 font-bold text-white transition hover:bg-red-700">
-            {labels.bookStay}
-          </BookButton>
         </div>
       </section>
 

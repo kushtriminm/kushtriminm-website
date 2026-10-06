@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MapPin, Star } from "lucide-react";
+import { MapPin, SlidersHorizontal, Star } from "lucide-react";
 import { allBoards, boardLabels, type Board } from "@/data/hotel-pricing";
 import BookButton from "./BookButton";
 import ScrollRow from "./ScrollRow";
@@ -25,6 +25,7 @@ export type HotelCard = {
 const labels = {
   all: "Të gjitha",
   stars: "Yje",
+  filters: "Filtra",
   service: "Shërbimi",
   clear: "Pastro filtrat",
   count: "hotele",
@@ -61,6 +62,7 @@ export default function HotelsBrowser({ cards }: { cards: HotelCard[] }) {
   const [country, setCountry] = useState("");
   const [stars, setStars] = useState(0);
   const [service, setService] = useState<Board | "">("");
+  const [open, setOpen] = useState(false);
 
   const countries = Array.from(new Set(cards.map((c) => c.country)));
   const starOptions = Array.from(
@@ -78,6 +80,7 @@ export default function HotelsBrowser({ cards }: { cards: HotelCard[] }) {
   );
   const regions = Array.from(new Set(visible.map((c) => c.region)));
   const filtered = !!country || !!stars || !!service;
+  const extraCount = (stars ? 1 : 0) + (service ? 1 : 0);
 
   function clear() {
     setCountry("");
@@ -89,9 +92,9 @@ export default function HotelsBrowser({ cards }: { cards: HotelCard[] }) {
 
   return (
     <>
-      <section className="px-5">
-        <div className="mx-auto max-w-7xl space-y-3">
-          <div className="flex gap-2 overflow-x-auto pb-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <section className="px-5">
+        <div className="mx-auto max-w-7xl">
+          <div className="flex flex-wrap items-center justify-center gap-2">
             <button type="button" onClick={() => setCountry("")} className={pill(!country)}>
               {labels.all}
             </button>
@@ -105,47 +108,68 @@ export default function HotelsBrowser({ cards }: { cards: HotelCard[] }) {
                 {name}
               </button>
             ))}
+
+            <button
+              type="button"
+              onClick={() => setOpen(!open)}
+              aria-expanded={open}
+              className={`flex shrink-0 items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-bold transition hover:text-white ${
+                open || extraCount > 0
+                  ? "border-red-500 text-white"
+                  : "border-white/15 text-gray-300 hover:border-red-500/60"
+              }`}
+            >
+              <SlidersHorizontal size={16} />
+              {labels.filters}
+              {extraCount > 0 && ` (${extraCount})`}
+            </button>
           </div>
 
-          <div className="flex flex-wrap items-center gap-2">
-            <span className={label}>{labels.stars}</span>
-            {starOptions.map((s) => (
-              <button
-                key={s}
-                type="button"
-                onClick={() => setStars(stars === s ? 0 : s)}
-                className={pill(stars === s)}
-              >
-                {s} ★
-              </button>
-            ))}
-
-            {serviceOptions.length > 0 && (
-              <>
-                <span className={`${label} ml-2`}>{labels.service}</span>
-                {serviceOptions.map((b) => (
+          {open && (
+            <div className="mx-auto mt-4 max-w-3xl space-y-4 rounded-2xl border border-white/10 bg-neutral-900/60 p-4">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className={label}>{labels.stars}</span>
+                {starOptions.map((s) => (
                   <button
-                    key={b}
+                    key={s}
                     type="button"
-                    onClick={() => setService(service === b ? "" : b)}
-                    className={pill(service === b)}
+                    onClick={() => setStars(stars === s ? 0 : s)}
+                    className={pill(stars === s)}
                   >
-                    {boardLabels[b]}
+                    {s} ★
                   </button>
                 ))}
-              </>
-            )}
+              </div>
 
-            {filtered && (
+              {serviceOptions.length > 0 && (
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className={label}>{labels.service}</span>
+                  {serviceOptions.map((b) => (
+                    <button
+                      key={b}
+                      type="button"
+                      onClick={() => setService(service === b ? "" : b)}
+                      className={pill(service === b)}
+                    >
+                      {boardLabels[b]}
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
+
+          {filtered && (
+            <div className="mt-3 text-center">
               <button
                 type="button"
                 onClick={clear}
-                className="ml-2 text-sm font-bold text-red-500 hover:text-red-400"
+                className="text-sm font-bold text-red-500 hover:text-red-400"
               >
                 {labels.clear}
               </button>
-            )}
-          </div>
+            </div>
+          )}
         </div>
       </section>
 

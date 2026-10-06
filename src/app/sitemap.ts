@@ -1,38 +1,34 @@
 import type { MetadataRoute } from "next";
+import { allHotels } from "@/data/all-hotels";
+
+// CHECK: use the same domain as in your old sitemap.ts
+const baseUrl = "https://www.kushtriminm.com";
+
+const pages = [
+  "",
+  "/destinations",
+  "/destinations/antalya",
+  "/destinations/egypt",
+  "/destinations/greece",
+  "/hotels",
+  "/book",
+  "/about",
+  "/contact",
+];
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://kushtriminm.com";
+  const now = new Date();
 
   return [
-    {
-      url: baseUrl,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 1,
-    },
-    {
-      url: `${baseUrl}/destinations`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.9,
-    },
-    {
-      url: `${baseUrl}/destinations/antalya`,
-      lastModified: new Date(),
-      changeFrequency: "weekly",
-      priority: 0.8,
-    },
-    {
-      url: `${baseUrl}/about`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
-    {
-      url: `${baseUrl}/contact`,
-      lastModified: new Date(),
-      changeFrequency: "monthly",
-      priority: 0.7,
-    },
+    ...pages.map((path) => ({
+      url: `${baseUrl}${path}`,
+      lastModified: now,
+      priority: path === "" ? 1 : 0.8,
+    })),
+    ...allHotels.map((hotel) => ({
+      url: `${baseUrl}/hotels/${hotel.slug}`,
+      lastModified: now,
+      priority: 0.6,
+    })),
   ];
 }
