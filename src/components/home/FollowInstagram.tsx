@@ -1,142 +1,49 @@
-"use client";
+import { FaFacebookF, FaInstagram } from "react-icons/fa";
 
-import { Plane } from "lucide-react";
-import { motion } from "framer-motion";
-
+const INSTAGRAM_URL = "https://www.instagram.com/kushtriminm";
+// Leave "" to hide the Facebook button.
+const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61558633936209";
 
 export default function FollowInstagram() {
-
   return (
+    <section className="bg-black px-5 py-14 sm:py-20">
+      <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/60 px-6 py-10 text-center sm:px-10">
+        <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-72 -translate-x-1/2 rounded-full bg-red-600/15 blur-3xl" />
 
-    <section className="relative overflow-hidden bg-black py-28">
-
-
-      {/* Glow */}
-
-      <div className="absolute left-1/2 top-10 h-80 w-80 -translate-x-1/2 rounded-full bg-red-600/10 blur-3xl" />
-
-
-
-      <div className="relative mx-auto max-w-7xl px-6">
-
-
-
-        <motion.div
-
-          initial={{ opacity: 0, y: 40 }}
-
-          whileInView={{ opacity: 1, y: 0 }}
-
-          transition={{ duration: 0.7 }}
-
-          className="rounded-[40px] border border-white/10 bg-neutral-900/80 px-8 py-20 text-center"
-
-        >
-
-
-
-
-          <motion.div
-
-            animate={{
-              y:[0,-10,0]
-            }}
-
-            transition={{
-              duration:3,
-              repeat:Infinity
-            }}
-
-            className="mx-auto mb-8 flex h-16 w-16 items-center justify-center rounded-full bg-red-600/20 text-red-500"
-
-          >
-
-            <Plane size={30}/>
-
-          </motion.div>
-
-
-
-
-
-
-          <p className="text-sm uppercase tracking-[5px] text-red-500">
-
-            Follow The Adventure
-
-          </p>
-
-
-
-
-
-          <h2 className="mt-6 text-5xl font-black text-white md:text-6xl">
-
-            Discover the world
-
-            <br />
-
-            with us.
-
+        <div className="relative">
+          <p className="text-sm font-bold uppercase text-red-500">Na ndiq</p>
+          <h2 className="mt-2 text-2xl font-extrabold uppercase tracking-wide text-white sm:text-4xl">
+            @kushtriminm
           </h2>
-
-
-
-
-
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-8 text-gray-400">
-
-            Follow Kushtrimi NM Worldwide for luxury destinations,
-            travel inspiration and exclusive holiday offers.
-
+          <p className="mt-3 text-sm text-gray-400">
+            Oferta të reja dhe udhëtimet e radhës.
           </p>
 
-
-
-
-
-
-          <div className="mt-10 flex flex-col justify-center gap-4 sm:flex-row">
-
-
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
             <a
-              href="https://www.instagram.com/kushtriminm"
+              href={INSTAGRAM_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-full bg-red-600 px-10 py-4 font-semibold text-white transition hover:bg-red-700"
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] px-8 py-3 font-bold text-white transition hover:scale-105 hover:brightness-110 sm:w-auto"
             >
-
-              Explore Instagram
-
+              <FaInstagram size={18} />
+              Instagram
             </a>
 
-
-
-            <a
-              href="/offers"
-              className="rounded-full border border-white/30 px-10 py-4 font-semibold text-white transition hover:border-red-500 hover:text-red-500"
-            >
-
-              View Offers
-
-            </a>
-
-
-
+            {FACEBOOK_URL && (
+              <a
+                href={FACEBOOK_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex w-full items-center justify-center gap-2 rounded-full bg-[#1877F2] px-8 py-3 font-bold text-white transition hover:scale-105 hover:bg-[#166fe0] sm:w-auto"
+              >
+                <FaFacebookF size={16} />
+                Facebook
+              </a>
+            )}
           </div>
-
-
-
-
-
-        </motion.div>
-
-
-
+        </div>
       </div>
-
-
     </section>
-
   );
 }

@@ -4,7 +4,6 @@ import "./globals.css";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
-import NewsletterPopup from "@/components/NewsletterPopup";
 
 export const metadata: Metadata = {
   title: "Kushtrimi NM Worldwide",
@@ -12,6 +11,7 @@ export const metadata: Metadata = {
     "Kushtrimi NM Worldwide - Discover hotels, holidays and unforgettable travel experiences worldwide.",
   keywords: [
     "Kushtrimi NM Worldwide",
+    "kushtrimi nm",
     "travel agency",
     "holidays",
     "hotels",
@@ -34,17 +34,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className="bg-black text-white antialiased">
+    <html lang="sq">
+      <body className="overflow-x-clip bg-black text-white antialiased">
         <Navbar />
 
-        <main>{children}</main>
+        <div>{children}</div>
 
         <Footer />
 
         <WhatsAppButton />
-
-        <NewsletterPopup />
       </body>
     </html>
   );

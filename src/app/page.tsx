@@ -1,31 +1,25 @@
-
 import Hero from "@/components/home/Hero";
+import BusTours from "@/components/home/BusTours";
 import FeaturedDestinations from "@/components/home/FeaturedDestinations";
-import HotelsPreview from "@/components/home/HotelsPreview";
 import WhyChooseUs from "@/components/home/WhyChooseUs";
 import Testimonials from "@/components/home/Testimonials";
-import Stats from "@/components/home/Stats";
 import FollowInstagram from "@/components/home/FollowInstagram";
-import ContactBanner from "@/components/home/ContactBanner";
+import Location from "@/components/home/Location";
 
 export default function Home() {
   return (
-    <>
+    <main>
       <Hero />
 
-      <Stats />
+      <div id="udhetime" className="scroll-mt-20">
+        <BusTours />
+      </div>
 
       <FeaturedDestinations />
-
-      <HotelsPreview />
-
       <WhyChooseUs />
-
       <Testimonials />
-
       <FollowInstagram />
-
-      <ContactBanner />
-    </>
+      <Location />
+    </main>
   );
 }

@@ -253,3 +253,20 @@ body {
   background:#fb923c;
 
 }
+
+/* Centre pop-ups (dialogs) in the middle of the screen */
+dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  height: fit-content;
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+body:has(dialog[open]) {
+  overflow: hidden;
+}
