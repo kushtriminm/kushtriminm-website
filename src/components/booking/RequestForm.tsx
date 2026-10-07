@@ -199,7 +199,7 @@ export default function RequestForm() {
       {/* Step 1: destinations in one horizontal row */}
       <div className={card}>
         <StepTitle n={1}>{labels.step1}</StepTitle>
-        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:-mx-6 sm:px-6 lg:mx-0 lg:grid lg:grid-cols-7 lg:overflow-visible lg:px-0 [&::-webkit-scrollbar]:hidden">
+        <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 lg:grid-cols-7 [&::-webkit-scrollbar]:hidden">
           {destinations.map((d) => {
             const selected = destId === d.id;
             return (
@@ -208,7 +208,7 @@ export default function RequestForm() {
                 type="button"
                 onClick={() => pickDestination(d.id)}
                 aria-pressed={selected}
-                className={`group relative aspect-[3/4] w-[36%] shrink-0 snap-center overflow-hidden rounded-2xl border text-left transition duration-300 sm:w-[24%] lg:w-auto ${
+                className={`group relative aspect-[3/4] w-[36%] shrink-0 snap-center overflow-hidden rounded-2xl border text-left transition duration-300 sm:w-auto ${
                   selected
                     ? "border-red-500 ring-2 ring-red-500 shadow-[0_0_30px_rgba(220,38,38,0.35)]"
                     : "border-white/10 hover:border-red-500/60"

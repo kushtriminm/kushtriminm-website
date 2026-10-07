@@ -1,8 +1,9 @@
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 
 const socials = [
   { name: "Instagram", href: "https://www.instagram.com/kushtriminm", Icon: FaInstagram },
   { name: "Facebook", href: "https://www.facebook.com/profile.php?id=61558633936209", Icon: FaFacebookF },
+  { name: "TikTok", href: "https://www.tiktok.com/@kushtriminm", Icon: FaTiktok },
 ];
 
 export default function SocialIcons({ className = "" }: { className?: string }) {

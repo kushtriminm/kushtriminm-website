@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 
 // All the words in the footer. Change them here.
 const labels = {
@@ -32,6 +32,11 @@ const socials = [
     name: "Facebook",
     href: "https://www.facebook.com/profile.php?id=61558633936209",
     icon: FaFacebookF,
+  },
+  {
+    name: "TikTok",
+    href: "https://www.tiktok.com/@kushtriminm",
+    icon: FaTiktok,
   },
 ];
 

@@ -39,6 +39,7 @@ export const busTours: BusTour[] = [
     price: 89,
     priceNote: "për person",
     highlights: [
+      "Transport me autobus",
       "Hotel 5 yje me SPA falas",
       "Mëngjes turk i përfshirë",
       "Guidë profesionale në shqip",
@@ -102,7 +103,8 @@ export const busTours: BusTour[] = [
     price: 169,
     priceNote: "për person",
     highlights: [
-      "2 netë në B&B Hotel Budapest City",
+      "Transport me autobus",
+      "2 netë akomodim në hotel",
       "Mëngjes i përfshirë",
       "Vizita në Budapest dhe Vjenë",
     ],
@@ -116,7 +118,7 @@ export const busTours: BusTour[] = [
     from: "Prishtinë",
     includes: [
       "Transport me autobus",
-      "2 netë akomodim në B&B Hotel Budapest City, në qendër të Budapestit",
+      "2 netë akomodim në hotel",
       "Mëngjes në hotel",
       "Vizita në Budapest dhe Vjenë",
     ],
@@ -124,7 +126,7 @@ export const busTours: BusTour[] = [
     itinerary: [
       {
         day: "Dita 1 - Budapest",
-        text: "Arritja në Budapest. Shëtitje dhe vizita te Fisherman's Bastion, Chain Bridge, Parlamenti dhe Budapest Castle, me kohë të lirë për drekë. Akomodimi në B&B Hotel Budapest City dhe pushim pasdite. Në mbrëmje shëtitje panoramike në qytet dhe shëtitje me anije në Danub.",
+        text: "Arritja në Budapest. Shëtitje dhe vizita te Fisherman's Bastion, Chain Bridge, Parlamenti dhe Budapest Castle, me kohë të lirë për drekë. Akomodimi në hotel dhe pushim pasdite. Në mbrëmje shëtitje panoramike në qytet dhe shëtitje me anije në Danub.",
       },
       {
         day: "Dita 2 - Vjenë",

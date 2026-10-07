@@ -6,13 +6,15 @@ import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
 
 export const metadata: Metadata = {
-  title: "Kushtrimi NM Worldwide",
+  metadataBase: new URL("https://kushtriminm.com"),
+  title: "Kushtrimi NM Worldwide | Agjenci Udhëtimi në Gjakovë",
   description:
-    "Kushtrimi NM Worldwide - Discover hotels, holidays and unforgettable travel experiences worldwide.",
+    "Kushtrimi NM Worldwide - agjencia e udhëtimit në Gjakovë. Pushime, fluturime, hotele dhe udhëtime me autobus në Turqi, Egjipt, Greqi, Shqipëri dhe më gjerë.",
   keywords: [
     "Kushtrimi NM Worldwide",
     "kushtrimi nm",
     "travel agency",
+    "agjenci udhetimi Gjakove",
     "holidays",
     "hotels",
     "Albania hotels",
@@ -23,8 +25,20 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kushtrimi NM Worldwide",
     description:
-      "Discover hotels, holidays and unforgettable travel experiences worldwide.",
+      "Pushime, fluturime, hotele dhe udhëtime me autobus, të organizuara personalisht nga Gjakova.",
     type: "website",
+    url: "/",
+    siteName: "Kushtrimi NM Worldwide",
+    images: [
+      {
+        url: "/images/hero/home.jpg",
+        alt: "Kushtrimi NM Worldwide",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    images: ["/images/hero/home.jpg"],
   },
 };
 
