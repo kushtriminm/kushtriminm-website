@@ -41,7 +41,7 @@ const socials = [
 ];
 
 // Put the VISUALEA website or Instagram link in href. Empty = plain text.
-const credit = { name: "VISUALEA", href: "https://www.instagram.com/visualeastudio" };
+const credit = { name: "VISUALEA", href: "https://visualeastudio.com" };
 
 const directionsUrl =
   "https://www.google.com/maps/search/?api=1&query=42.3768706,20.4321499";
