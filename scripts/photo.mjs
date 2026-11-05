@@ -17,15 +17,19 @@ function stop(message) {
   process.exit(1);
 }
 
-async function save(input, output, width) {
+// Hotel photos stay small and fast. Single photos (offers, tours, hero) are sharper.
+const FAST = { maxKb: 300, qualities: [80, 72, 64, 56, 48] };
+const HIGH = { maxKb: 700, qualities: [90, 86, 82, 78, 74, 70] };
+
+async function save(input, output, width, setting) {
   fs.mkdirSync(path.dirname(output), { recursive: true });
-  for (const quality of [80, 72, 64, 56, 48]) {
+  for (const quality of setting.qualities) {
     await sharp(input)
       .rotate()
       .resize({ width, withoutEnlargement: true })
       .jpeg({ quality, mozjpeg: true })
       .toFile(output);
-    if (fs.statSync(output).size <= 300 * 1024) break;
+    if (fs.statSync(output).size <= setting.maxKb * 1024) break;
   }
   console.log(`${output.replaceAll("\\", "/")}: ${Math.round(fs.statSync(output).size / 1024)} KB`);
 }
@@ -51,7 +55,7 @@ if (mode === "hotel" && target) {
 
   for (const file of images) {
     n++;
-    await save(path.join(inbox, file), path.join(dir, `${n}.jpg`), 1600);
+    await save(path.join(inbox, file), path.join(dir, `${n}.jpg`), 1600, FAST);
     archive(file);
   }
 } else if (mode === "file" && target) {
@@ -62,8 +66,8 @@ if (mode === "hotel" && target) {
   if (fs.existsSync(out) && extra !== "replace") {
     stop(`${out} already exists. Add the word replace at the end if you want to replace it.`);
   }
-  const width = /hero|banner/i.test(target) ? 1920 : 1600;
-  await save(path.join(inbox, images[0]), out, width);
+  const width = /hero|banner/i.test(target) ? 2400 : 2000;
+  await save(path.join(inbox, images[0]), out, width, HIGH);
   archive(images[0]);
 } else {
   stop("Use:  node scripts\\photo.mjs hotel <slug>   or   node scripts\\photo.mjs file images/...jpg");
