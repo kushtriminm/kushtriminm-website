@@ -10,7 +10,6 @@ import { useLang, type Lang } from "@/components/LanguageProvider";
 import Snow from "@/components/home/Snow";
 import { montserrat } from "@/lib/fonts";
 
-
 const heroImage = "/images/hero/home.jpg";
 
 // How many rows the board shows at once.
@@ -115,7 +114,7 @@ function buildRows(lang: Lang, today: string): Row[] {
   return rows.sort((a, b) => a.date.localeCompare(b.date) || a.price - b.price);
 }
 
-// The red globe picture takes the place of the letter "o". It is the file public/images/globe.png.
+// The globe picture takes the place of the letter "o". It is the file public/images/globe.png.
 function Globe() {
   return (
     // eslint-disable-next-line @next/next/no-img-element
