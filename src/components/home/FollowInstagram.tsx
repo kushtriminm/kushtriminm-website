@@ -1,11 +1,12 @@
 "use client";
 
-import { FaFacebookF, FaInstagram } from "react-icons/fa";
+import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 import { useLang } from "@/components/LanguageProvider";
 
 const INSTAGRAM_URL = "https://www.instagram.com/kushtriminm";
-// Leave "" to hide the Facebook button.
+// Leave "" to hide a button.
 const FACEBOOK_URL = "https://www.facebook.com/profile.php?id=61558633936209";
+const TIKTOK_URL = "https://www.tiktok.com/@kushtriminm";
 
 // All the words here, in both languages. Change them here.
 const labels = {
@@ -13,45 +14,56 @@ const labels = {
   en: { eyebrow: "Follow us", text: "New offers and upcoming trips." },
 };
 
+const round =
+  "flex h-12 w-12 items-center justify-center rounded-full text-white transition hover:scale-105";
+
 export default function FollowInstagram() {
   const { lang } = useLang();
   const t = labels[lang];
 
   return (
-    <section className="bg-black px-5 py-14 sm:py-20">
-      <div className="relative mx-auto max-w-3xl overflow-hidden rounded-3xl border border-white/10 bg-neutral-900/60 px-6 py-10 text-center sm:px-10">
-        <div className="pointer-events-none absolute left-1/2 top-0 h-40 w-72 -translate-x-1/2 rounded-full bg-red-600/15 blur-3xl" />
-
-        <div className="relative">
-          <p className="text-sm font-bold uppercase text-red-500">{t.eyebrow}</p>
-          <h2 className="mt-2 break-words text-2xl font-extrabold uppercase tracking-wide text-white sm:text-4xl">
+    <section className="bg-black px-5 py-8 sm:py-10">
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-5 rounded-2xl border border-white/10 bg-neutral-900/60 px-6 py-6 text-center sm:flex-row sm:justify-between sm:text-left">
+        <div className="min-w-0">
+          <p className="text-xs font-bold uppercase text-red-500">{t.eyebrow}</p>
+          <p className="mt-1 break-words text-xl font-extrabold uppercase tracking-wide text-white">
             @kushtriminm
-          </h2>
-          <p className="mt-3 text-balance text-sm text-gray-400">{t.text}</p>
+          </p>
+          <p className="mt-1 text-balance text-sm text-gray-400">{t.text}</p>
+        </div>
 
-          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        <div className="flex shrink-0 gap-3">
+          <a
+            href={INSTAGRAM_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Instagram"
+            className={`${round} bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)]`}
+          >
+            <FaInstagram size={20} />
+          </a>
+          {FACEBOOK_URL && (
             <a
-              href={INSTAGRAM_URL}
+              href={FACEBOOK_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)] px-8 py-3 font-bold text-white transition hover:scale-105 hover:brightness-110 sm:w-auto"
+              aria-label="Facebook"
+              className={`${round} bg-[#1877F2]`}
             >
-              <FaInstagram size={18} />
-              Instagram
+              <FaFacebookF size={18} />
             </a>
-
-            {FACEBOOK_URL && (
-              <a
-                href={FACEBOOK_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full bg-[#1877F2] px-8 py-3 font-bold text-white transition hover:scale-105 hover:bg-[#166fe0] sm:w-auto"
-              >
-                <FaFacebookF size={16} />
-                Facebook
-              </a>
-            )}
-          </div>
+          )}
+          {TIKTOK_URL && (
+            <a
+              href={TIKTOK_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="TikTok"
+              className={`${round} border border-white/25 bg-black`}
+            >
+              <FaTiktok size={18} />
+            </a>
+          )}
         </div>
       </div>
     </section>
