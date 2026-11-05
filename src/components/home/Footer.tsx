@@ -1,26 +1,48 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
+import { useLang } from "@/components/LanguageProvider";
 
-// All the words in the footer. Change them here.
+// All the words in the footer, in both languages. Change them here.
 const labels = {
-  tagline:
-    "Pushime, fluturime, hotele dhe udhëtime me autobus, të organizuara personalisht nga Gjakova.",
-  explore: "Faqet",
-  contact: "Kontakt",
-  whatsapp: "Na shkruaj në WhatsApp",
-  rights: "Të gjitha të drejtat e rezervuara.",
-  designedBy: "Designed by",
+  sq: {
+    tagline:
+      "Pushime, fluturime, hotele dhe udhëtime me guidë, të organizuara personalisht nga Gjakova.",
+    explore: "Faqet",
+    contact: "Kontakt",
+    whatsapp: "Na shkruaj në WhatsApp",
+    rights: "Të gjitha të drejtat e rezervuara.",
+    designedBy: "Designed by",
+    address: "Xheladin Hana, Gjakovë",
+    links: [
+      { name: "Destinacionet", href: "/destinations" },
+      { name: "Hotelet", href: "/hotels" },
+      { name: "Rezervo", href: "/book" },
+      { name: "Rreth nesh", href: "/about" },
+      { name: "Kontakt", href: "/contact" },
+    ],
+  },
+  en: {
+    tagline:
+      "Holidays, flights, hotels and guided tours, personally organised from Gjakova.",
+    explore: "Pages",
+    contact: "Contact",
+    whatsapp: "Chat on WhatsApp",
+    rights: "All rights reserved.",
+    designedBy: "Designed by",
+    address: "Xheladin Hana, Gjakova",
+    links: [
+      { name: "Destinations", href: "/destinations" },
+      { name: "Hotels", href: "/hotels" },
+      { name: "Book", href: "/book" },
+      { name: "About", href: "/about" },
+      { name: "Contact", href: "/contact" },
+    ],
+  },
 };
-
-const links = [
-  { name: "Destinacionet", href: "/destinations" },
-  { name: "Hotelet", href: "/hotels" },
-  { name: "Rezervo", href: "/book" },
-  { name: "Rreth nesh", href: "/about" },
-  { name: "Kontakt", href: "/contact" },
-];
 
 const socials = [
   {
@@ -40,7 +62,7 @@ const socials = [
   },
 ];
 
-// Put the VISUALEA website or Instagram link in href. Empty = plain text.
+// KEEP YOUR OWN LINK HERE (the Visualea website). Empty = plain text.
 const credit = { name: "VISUALEA", href: "https://visualeastudio.com" };
 
 const directionsUrl =
@@ -49,6 +71,9 @@ const directionsUrl =
 const glow = "font-semibold text-orange-500 [text-shadow:0_0_10px_rgba(249,115,22,0.7)]";
 
 export default function Footer() {
+  const { lang } = useLang();
+  const t = labels[lang];
+
   return (
     <footer className="border-t border-white/10 bg-black text-white">
       <div className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-6 sm:pb-14 sm:pt-14">
@@ -64,7 +89,7 @@ export default function Footer() {
             />
 
             <p className="mt-4 max-w-sm text-sm leading-6 text-gray-400">
-              {labels.tagline}
+              {t.tagline}
             </p>
 
             <div className="mt-5 flex gap-3">
@@ -90,11 +115,11 @@ export default function Footer() {
           {/* Links: desktop only */}
           <div className="hidden md:block">
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">
-              {labels.explore}
+              {t.explore}
             </h3>
 
             <div className="mt-4 flex flex-col gap-3 text-sm text-gray-400">
-              {links.map((link) => (
+              {t.links.map((link) => (
                 <Link
                   key={link.href}
                   href={link.href}
@@ -109,7 +134,7 @@ export default function Footer() {
           {/* Contact */}
           <div>
             <h3 className="text-sm font-bold uppercase tracking-wider text-white">
-              {labels.contact}
+              {t.contact}
             </h3>
 
             <div className="mt-4 space-y-3 text-sm text-gray-400">
@@ -136,7 +161,7 @@ export default function Footer() {
                 className="flex items-center gap-3 transition hover:text-white"
               >
                 <MapPin size={16} className="shrink-0 text-red-500" />
-                Xheladin Hana, Gjakovë
+                {t.address}
               </a>
             </div>
 
@@ -146,17 +171,18 @@ export default function Footer() {
               rel="noopener noreferrer"
               className="mt-5 inline-block whitespace-nowrap rounded-full bg-red-600 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-red-700"
             >
-              {labels.whatsapp}
+              {t.whatsapp}
             </a>
           </div>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-neutral-900 pt-6 text-center text-xs text-gray-500 sm:flex-row sm:text-sm">
+        {/* sm:pr-16 keeps the credit clear of the floating WhatsApp button */}
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-neutral-900 pt-6 text-center text-xs text-gray-500 sm:flex-row sm:pr-16 sm:text-sm">
           <p>
-            &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. {labels.rights}
+            &copy; {new Date().getFullYear()} Kushtrimi NM Worldwide. {t.rights}
           </p>
           <p>
-            {labels.designedBy}{" "}
+            {t.designedBy}{" "}
             {credit.href ? (
               <a
                 href={credit.href}

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Heart, MessageCircle, Quote } from "lucide-react";
 import LightUp from "@/components/LightUp";
+import WhyChooseUs from "@/components/home/WhyChooseUs";
 
 export const metadata: Metadata = {
   title: "Rreth nesh | Kushtrimi NM Worldwide",
@@ -77,11 +78,14 @@ export default function AboutPage() {
 
           <div className="relative space-y-6 text-base leading-8 text-gray-400 sm:text-lg sm:leading-9">
             {story.map((paragraph) => (
-  <LightUp key={paragraph}>{paragraph}</LightUp>
-))}
+              <LightUp key={paragraph}>{paragraph}</LightUp>
+            ))}
           </div>
         </div>
       </section>
+
+      {/* Why travel with us (moved here from the homepage) */}
+      <WhyChooseUs />
 
       {/* Thank you */}
       <section className="relative px-5 pb-12 text-center sm:pb-16">

@@ -1,0 +1,457 @@
+"use client";
+
+import { useRef, useState, useSyncExternalStore } from "react";
+import Image from "next/image";
+import {
+  Calendar as CalendarIcon,
+  Check,
+  MessageCircle,
+  Plane,
+  Users,
+  X,
+} from "lucide-react";
+import {
+  CONDITIONS,
+  NOT_INCLUDED,
+  allIncludes,
+  offers,
+  perPerson,
+  type Departure,
+  type Offer,
+  type Region,
+} from "@/data/offers";
+import { useLang, type Lang } from "@/components/LanguageProvider";
+
+type Tab = "program" | "includes" | "info";
+type Upcoming = Offer & { upcoming: Departure[] };
+
+// All the words here, in both languages. Change them here.
+const labels = {
+  sq: {
+    eyebrow: "Me avion nga Tirana",
+    heading: "Udhëtime me guidë me avion",
+    intro: "Fluturim, hotel, mëngjes dhe shoqërues shqiptar. Zgjidh datën dhe rezervo.",
+    priceNote:
+      "Çmimet janë për person. Nisja nga Aeroporti i Tiranës. Udhëtimi nga Kosova deri në Tiranë nuk përfshihet.",
+    all: "Të gjitha",
+    from: "nga",
+    perPerson: "për person",
+    departures: "Nisjet",
+    details: "Detaje",
+    book: "Rezervo",
+    bookWhatsApp: "Rezervo në WhatsApp",
+    close: "Mbyll",
+    dates: "Zgjidh datën e nisjes",
+    people: "Numri i personave",
+    total: "Çmimi total:",
+    tabProgram: "Programi",
+    tabIncludes: "Përfshihet",
+    tabInfo: "Info",
+    day: "Dita",
+    notIncluded: "Nuk përfshihet",
+    extras: "Opsionale (pagesë shtesë)",
+    notes: "Kujdes",
+    conditions: "Kushtet",
+    region: "Rajoni",
+  },
+  en: {
+    eyebrow: "By plane from Tirana",
+    heading: "Guided tours by plane",
+    intro: "Flight, hotel, breakfast and an Albanian-speaking companion. Pick a date and book.",
+    priceNote:
+      "Prices are per person. Departure from Tirana Airport. Travel from Kosovo to Tirana is not included.",
+    all: "All",
+    from: "from",
+    perPerson: "per person",
+    departures: "Departures",
+    details: "Details",
+    book: "Book",
+    bookWhatsApp: "Book on WhatsApp",
+    close: "Close",
+    dates: "Choose your departure date",
+    people: "Number of people",
+    total: "Total price:",
+    tabProgram: "Program",
+    tabIncludes: "Included",
+    tabInfo: "Info",
+    day: "Day",
+    notIncluded: "Not included",
+    extras: "Optional (extra cost)",
+    notes: "Please note",
+    conditions: "Conditions",
+    region: "Region",
+  },
+};
+
+const regionLabels: Record<Region, Record<Lang, string>> = {
+  italy: { sq: "Itali", en: "Italy" },
+  spain: { sq: "Spanjë", en: "Spain" },
+  europe: { sq: "Evropë", en: "Europe" },
+  middleeast: { sq: "Dubai", en: "Dubai" },
+};
+
+function getToday() {
+  const d = new Date();
+  const pad = (n: number) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
+
+const subscribe = () => () => {};
+const dayMonth = (date: string) => date.split("-").reverse().slice(0, 2).join(".");
+const fullDate = (date: string) => date.split("-").reverse().join(".");
+
+export default function OffersView() {
+  const { lang } = useLang();
+  const t = labels[lang];
+  const today = useSyncExternalStore(subscribe, getToday, getToday);
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [region, setRegion] = useState<"all" | Region>("all");
+  const [slug, setSlug] = useState<string | null>(null);
+  const [date, setDate] = useState<string | null>(null);
+  const [people, setPeople] = useState(2);
+  const [tab, setTab] = useState<Tab>("program");
+
+  const upcoming: Upcoming[] = offers
+    .filter((o) => o.active)
+    .map((o) => ({
+      ...o,
+      upcoming: o.departures
+        .filter((dep) => dep.start >= today)
+        .sort((a, b) => a.start.localeCompare(b.start)),
+    }))
+    .filter((o) => o.upcoming.length > 0);
+
+  if (upcoming.length === 0) return null;
+
+  const regions = Array.from(new Set(upcoming.map((o) => o.region)));
+  const shown = upcoming.filter((o) => region === "all" || o.region === region);
+  const selected = upcoming.find((o) => o.slug === slug) ?? null;
+  const dep = selected?.upcoming.find((x) => x.start === date);
+  const unit = dep ? perPerson(dep.total) : 0;
+  const total = unit * people;
+
+  function open(offer: Upcoming) {
+    setSlug(offer.slug);
+    setDate(offer.upcoming[0].start);
+    setPeople(2);
+    setTab("program");
+    dialogRef.current?.showModal();
+  }
+
+  const tabs: { id: Tab; label: string }[] = [
+    { id: "program", label: t.tabProgram },
+    { id: "includes", label: t.tabIncludes },
+    { id: "info", label: t.tabInfo },
+  ];
+
+  let message = "";
+  if (selected && dep) {
+    const title = selected.title[lang];
+    message =
+      lang === "en"
+        ? `Hello! I would like to book "${title}" (${fullDate(dep.start)} - ${fullDate(dep.end)}) for ${people} person(s). Price: ${unit}€ per person (${total}€ total).`
+        : `Përshëndetje! Dua të rezervoj udhëtimin "${title}" (${fullDate(dep.start)} - ${fullDate(dep.end)}) për ${people} person/a. Çmimi: ${unit}€ për person (${total}€ total).`;
+  }
+
+  return (
+    <section
+      id="avion"
+      className="scroll-mt-24 bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-10 sm:py-16"
+    >
+      <div className="mx-auto max-w-6xl">
+        <div className="text-center">
+          <p className="text-xs font-bold uppercase text-red-500 sm:text-sm">{t.eyebrow}</p>
+          <h2 className="mt-2 text-2xl font-extrabold uppercase tracking-wide text-white sm:text-4xl">
+            {t.heading}
+          </h2>
+          <p className="mx-auto mt-3 max-w-md text-sm text-gray-400">{t.intro}</p>
+          <p className="mx-auto mt-2 max-w-lg text-xs text-gray-500">{t.priceNote}</p>
+        </div>
+
+        <div
+          role="group"
+          aria-label={t.region}
+          className="mt-6 flex flex-wrap items-center justify-center gap-2"
+        >
+          {(["all", ...regions] as ("all" | Region)[]).map((r) => (
+            <button
+              key={r}
+              type="button"
+              aria-pressed={region === r}
+              onClick={() => setRegion(r)}
+              className={`min-h-[40px] rounded-full px-5 text-sm font-bold transition ${
+                region === r
+                  ? "bg-red-600 text-white"
+                  : "border border-white/15 bg-neutral-900 text-gray-300 hover:border-red-500/60 hover:text-white"
+              }`}
+            >
+              {r === "all" ? t.all : regionLabels[r][lang]}
+            </button>
+          ))}
+        </div>
+
+        <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+          {shown.map((offer) => {
+            const min = Math.min(...offer.upcoming.map((x) => perPerson(x.total)));
+            return (
+              <article
+                key={offer.slug}
+                className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-900 transition duration-300 hover:border-red-500/60 hover:shadow-[0_0_30px_rgba(220,38,38,0.2)]"
+              >
+                <div className="relative aspect-[16/10] w-full bg-gradient-to-br from-red-950/60 to-neutral-950">
+                  {offer.image && (
+                    <Image
+                      src={offer.image}
+                      alt={offer.title[lang]}
+                      fill
+                      sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                      className="object-cover"
+                    />
+                  )}
+                  <span className="absolute left-2.5 top-2.5 flex items-center gap-1 rounded-full bg-black/60 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-white backdrop-blur-sm">
+                    <Plane size={12} aria-hidden="true" />
+                    {offer.duration[lang]}
+                  </span>
+                </div>
+
+                <div className="flex flex-1 flex-col p-4">
+                  <h3 className="text-lg font-extrabold uppercase leading-tight tracking-wide text-white">
+                    {offer.title[lang]}
+                  </h3>
+                  <p className="mt-1 text-[13px] text-gray-400">{offer.tagline[lang]}</p>
+
+                  <p className="mt-3 flex items-baseline gap-1.5">
+                    <span className="text-xs text-gray-400">{t.from}</span>
+                    <span className="text-3xl font-black text-red-500">{min}€</span>
+                    <span className="text-xs text-gray-400">{t.perPerson}</span>
+                  </p>
+
+                  <div className="mt-3 flex flex-wrap items-center gap-1.5">
+                    {offer.upcoming.slice(0, 4).map((x) => (
+                      <span
+                        key={x.start}
+                        className="rounded-full bg-black px-2 py-1 text-[11px] font-bold text-white"
+                      >
+                        {dayMonth(x.start)}
+                      </span>
+                    ))}
+                    {offer.upcoming.length > 4 && (
+                      <span className="text-[11px] text-gray-400">+{offer.upcoming.length - 4}</span>
+                    )}
+                  </div>
+
+                  <div className="mt-auto grid grid-cols-2 gap-2 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => open(offer)}
+                      className="min-h-[44px] rounded-full border border-white/30 text-xs font-bold text-white transition hover:bg-white hover:text-black"
+                    >
+                      {t.details}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => open(offer)}
+                      className="flex min-h-[44px] items-center justify-center gap-1.5 rounded-full bg-red-600 text-xs font-bold text-white transition hover:bg-red-700"
+                    >
+                      <MessageCircle size={14} />
+                      {t.book}
+                    </button>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
+        </div>
+      </div>
+
+      <dialog
+        ref={dialogRef}
+        aria-label={selected?.title[lang] ?? t.details}
+        onClick={(e) => {
+          if (e.target === dialogRef.current) dialogRef.current?.close();
+        }}
+        className="fixed inset-0 m-auto h-fit max-h-[88svh] w-[calc(100%-1.5rem)] max-w-lg overflow-y-auto overscroll-contain rounded-3xl bg-neutral-900 p-0 text-white backdrop:bg-black/70"
+      >
+        {selected && (
+          <div>
+            <div className="relative px-5 pb-1 pr-14 pt-5">
+              <button
+                type="button"
+                aria-label={t.close}
+                onClick={() => dialogRef.current?.close()}
+                className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 transition hover:bg-black"
+              >
+                <X size={18} />
+              </button>
+              <span className="mb-1 inline-flex items-center gap-1 rounded-full bg-red-600/20 px-3 py-0.5 text-xs font-bold text-red-400">
+                <Plane size={12} aria-hidden="true" />
+                {selected.duration[lang]}
+              </span>
+              <h3 className="text-xl font-extrabold uppercase tracking-wide">
+                {selected.title[lang]}
+              </h3>
+              <p className="mt-1 flex items-baseline gap-2">
+                <span className="text-2xl font-black text-red-500">{unit}€</span>
+                <span className="text-sm text-gray-400">{t.perPerson}</span>
+              </p>
+            </div>
+
+            <div className="px-5 pb-5">
+              <p className="mt-3 flex items-center gap-1.5 text-xs font-bold uppercase text-gray-400">
+                <CalendarIcon size={14} className="text-red-500" />
+                {t.dates}
+              </p>
+              <div className="mt-2 flex snap-x gap-2 overflow-x-auto pb-2 sm:grid sm:grid-cols-4 sm:overflow-visible [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+                {selected.upcoming.map((x) => {
+                  const chosen = date === x.start;
+                  return (
+                    <button
+                      key={x.start}
+                      type="button"
+                      aria-pressed={chosen}
+                      onClick={() => setDate(x.start)}
+                      className={`flex min-h-[52px] min-w-[84px] shrink-0 snap-center flex-col items-center justify-center rounded-xl border p-2 text-xs font-bold transition ${
+                        chosen
+                          ? "border-red-500 bg-red-600 text-white shadow-lg shadow-red-600/30"
+                          : "border-white/10 bg-black/60 text-gray-200 hover:border-red-500/50"
+                      }`}
+                    >
+                      <span className="text-sm font-extrabold">{dayMonth(x.start)}</span>
+                      <span className="opacity-80">{perPerson(x.total)}€</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="mt-3 flex items-center justify-between rounded-2xl border border-white/10 bg-black/40 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <Users size={16} className="text-red-500" />
+                  <span className="text-xs font-bold uppercase text-gray-300">{t.people}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <button
+                    type="button"
+                    aria-label="-"
+                    onClick={() => setPeople(Math.max(1, people - 1))}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800 font-bold transition hover:bg-red-600"
+                  >
+                    -
+                  </button>
+                  <span className="w-6 text-center text-base font-extrabold">{people}</span>
+                  <button
+                    type="button"
+                    aria-label="+"
+                    onClick={() => setPeople(people + 1)}
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-neutral-800 font-bold transition hover:bg-red-600"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center justify-between rounded-2xl border border-red-600/30 bg-red-600/10 px-4 py-3">
+                <span className="text-sm font-bold text-gray-300">{t.total}</span>
+                <span className="text-2xl font-black text-red-500">{total}€</span>
+              </div>
+
+              <div className="mt-4 grid grid-cols-3 gap-1 rounded-full bg-black/60 p-1 text-xs font-bold">
+                {tabs.map((tabItem) => (
+                  <button
+                    key={tabItem.id}
+                    type="button"
+                    aria-pressed={tab === tabItem.id}
+                    onClick={() => setTab(tabItem.id)}
+                    className={`min-h-[40px] rounded-full transition ${
+                      tab === tabItem.id ? "bg-red-600 text-white" : "text-gray-400 hover:text-white"
+                    }`}
+                  >
+                    {tabItem.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-4 text-sm leading-6 text-gray-300">
+                {tab === "program" && (
+                  <ol className="space-y-4">
+                    {selected.days.map((day, i) => (
+                      <li key={i} className="border-l-2 border-red-600 pl-4">
+                        <p className="font-bold text-white">
+                          {t.day} {i + 1}
+                        </p>
+                        <p>{day[lang]}</p>
+                      </li>
+                    ))}
+                  </ol>
+                )}
+
+                {tab === "includes" && (
+                  <ul className="space-y-2">
+                    {allIncludes(selected).map((item) => (
+                      <li key={item.sq} className="flex gap-2">
+                        <Check size={16} className="mt-1 shrink-0 text-red-500" />
+                        {item[lang]}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                {tab === "info" && (
+                  <div className="space-y-5">
+                    <div>
+                      <p className="font-bold text-white">{t.notIncluded}</p>
+                      <ul className="mt-1 list-disc space-y-1 pl-5">
+                        {NOT_INCLUDED.map((item) => (
+                          <li key={item.sq}>{item[lang]}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    {selected.extras && (
+                      <div>
+                        <p className="font-bold text-white">{t.extras}</p>
+                        <ul className="mt-1 list-disc space-y-1 pl-5">
+                          {selected.extras.map((item) => (
+                            <li key={item.sq}>{item[lang]}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {selected.notes && (
+                      <div>
+                        <p className="font-bold text-white">{t.notes}</p>
+                        <ul className="mt-1 list-disc space-y-1 pl-5">
+                          {selected.notes.map((item) => (
+                            <li key={item.sq}>{item[lang]}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-bold text-white">{t.conditions}</p>
+                      <ul className="mt-1 list-disc space-y-1 pl-5">
+                        {CONDITIONS.map((item) => (
+                          <li key={item.sq}>{item[lang]}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            <div className="sticky bottom-0 border-t border-neutral-800 bg-neutral-900 p-4">
+              <a
+                href={`https://wa.me/38349833888?text=${encodeURIComponent(message)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex min-h-[48px] items-center justify-center gap-2 rounded-full bg-red-600 py-3 font-bold text-white shadow-lg shadow-red-600/30 transition hover:bg-red-700"
+              >
+                <MessageCircle size={18} />
+                {t.bookWhatsApp}
+              </a>
+            </div>
+          </div>
+        )}
+      </dialog>
+    </section>
+  );
+}

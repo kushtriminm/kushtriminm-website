@@ -5,6 +5,7 @@ import "./globals.css";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
+import { LanguageProvider } from "@/components/LanguageProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushtriminm.com"),
@@ -49,7 +50,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="sq">
+    <html lang="en">
       <body className="overflow-x-clip bg-black text-white antialiased">
         <Script id="meta-pixel" strategy="afterInteractive">
           {`
@@ -76,13 +77,15 @@ export default function RootLayout({
           />
         </noscript>
 
-        <Navbar />
+        <LanguageProvider>
+          <Navbar />
 
-        <div>{children}</div>
+          <div>{children}</div>
 
-        <Footer />
+          <Footer />
 
-        <WhatsAppButton />
+          <WhatsAppButton />
+        </LanguageProvider>
       </body>
     </html>
   );

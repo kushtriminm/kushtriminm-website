@@ -4,21 +4,57 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X, Phone } from "lucide-react";
+import { Menu, X, Phone, Search } from "lucide-react";
 import SocialIcons from "@/components/SocialIcons";
+import LangSwitch from "@/components/LangSwitch";
+import SearchDialog from "@/components/SearchDialog";
+import { useLang } from "@/components/LanguageProvider";
 
-const links = [
-  { name: "HOME", href: "/" },
-  { name: "DESTINATIONS", href: "/destinations" },
-  { name: "HOTELS", href: "/hotels" },
-  { name: "ABOUT", href: "/about" },
-  { name: "CONTACT", href: "/contact" },
-];
-
-const desktopLinks = links.filter((link) => link.href !== "/");
+// All the words in the menu, in both languages. Change them here.
+const labels = {
+  sq: {
+    home: "KRYEFAQJA",
+    destinations: "DESTINACIONET",
+    hotels: "OFERTAT",
+    about: "RRETH NESH",
+    contact: "KONTAKT",
+    book: "Rezervo",
+    search: "Kërko",
+    searchLabel: "Kërko në faqe",
+    whatsapp: "Na shkruaj në WhatsApp",
+    whatsappMessage: "Përshëndetje! Dua të pyes për një pushim.",
+    openMenu: "Hap menunë",
+    closeMenu: "Mbyll menunë",
+  },
+  en: {
+    home: "HOME",
+    destinations: "DESTINATIONS",
+    hotels: "OFFERS",
+    about: "ABOUT",
+    contact: "CONTACT",
+    book: "Book",
+    search: "Search",
+    searchLabel: "Search the site",
+    whatsapp: "Chat on WhatsApp",
+    whatsappMessage: "Hello! I would like to ask about a holiday.",
+    openMenu: "Open menu",
+    closeMenu: "Close menu",
+  },
+};
 
 export default function Navbar() {
   const pathname = usePathname();
+  const { lang } = useLang();
+  const t = labels[lang];
+
+  const links = [
+    { name: t.home, href: "/" },
+    { name: t.destinations, href: "/destinations" },
+    { name: t.hotels, href: "/offers" },
+    { name: t.about, href: "/about" },
+    { name: t.contact, href: "/contact" },
+  ];
+  const desktopLinks = links.filter((link) => link.href !== "/");
 
   // The menu counts as open only on the page where it was opened,
   // so it closes automatically when the page changes.
@@ -26,6 +62,7 @@ export default function Navbar() {
   const menuOpen = openOnPath === pathname;
 
   const [scrolled, setScrolled] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   const closeMenu = () => setOpenOnPath(null);
   const toggleMenu = () => setOpenOnPath(menuOpen ? null : pathname);
@@ -50,6 +87,8 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  const whatsappHref = `https://wa.me/38349833888?text=${encodeURIComponent(t.whatsappMessage)}`;
 
   return (
     <>
@@ -76,12 +115,9 @@ export default function Navbar() {
 
           {/* DESKTOP MENU */}
 
-          <nav className="hidden items-center gap-8 lg:flex xl:gap-10">
+          <nav className="hidden items-center gap-8 xl:flex 2xl:gap-10">
             {desktopLinks.map((link) => {
-              const active =
-                link.href === "/"
-                  ? pathname === "/"
-                  : pathname.startsWith(link.href);
+              const active = pathname.startsWith(link.href);
 
               return (
                 <Link
@@ -105,14 +141,18 @@ export default function Navbar() {
 
           {/* DESKTOP RIGHT SIDE */}
 
-          <div className="hidden items-center gap-5 lg:flex">
-            <a
-              href="tel:+38349833888"
-              className="flex items-center gap-2 text-white transition hover:text-red-500"
+          <div className="hidden items-center gap-4 xl:flex">
+            <button
+              type="button"
+              aria-label={t.searchLabel}
+              onClick={() => setSearchOpen(true)}
+              className="flex h-10 items-center gap-2 rounded-full border border-white/20 px-3 text-sm font-semibold text-gray-200 transition hover:border-red-500 hover:text-red-500 2xl:px-4"
             >
-              <Phone size={18} />
-              <span className="font-semibold">+383 49 833 888</span>
-            </a>
+              <Search size={17} />
+              <span className="hidden 2xl:inline">{t.search}</span>
+            </button>
+
+            <LangSwitch />
 
             <SocialIcons />
 
@@ -120,24 +160,33 @@ export default function Navbar() {
               href="/book"
               className="rounded-full bg-red-600 px-6 py-2.5 text-sm font-bold uppercase tracking-wider text-white transition hover:bg-red-700"
             >
-              Rezervo
+              {t.book}
             </Link>
           </div>
 
-          {/* MOBILE: BOOK + MENU BUTTON */}
+          {/* MOBILE: SEARCH + BOOK + MENU BUTTON */}
 
-          <div className="flex items-center gap-2 lg:hidden">
+          <div className="flex items-center gap-1 xl:hidden">
+            <button
+              type="button"
+              aria-label={t.searchLabel}
+              onClick={() => setSearchOpen(true)}
+              className="flex h-11 w-11 items-center justify-center rounded-xl text-white transition hover:bg-white/10"
+            >
+              <Search size={22} />
+            </button>
+
             <Link
               href="/book"
               onClick={closeMenu}
               className="rounded-full bg-red-600 px-4 py-2 text-xs font-bold uppercase tracking-wider text-white transition hover:bg-red-700"
             >
-              Rezervo
+              {t.book}
             </Link>
 
             <button
               type="button"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              aria-label={menuOpen ? t.closeMenu : t.openMenu}
               aria-expanded={menuOpen}
               onClick={toggleMenu}
               className="rounded-xl p-2 text-white transition hover:bg-white/10"
@@ -148,11 +197,13 @@ export default function Navbar() {
         </div>
       </header>
 
+      <SearchDialog open={searchOpen} onClose={() => setSearchOpen(false)} />
+
       {/* MOBILE MENU (outside the header on purpose) */}
 
       <div
         aria-hidden={!menuOpen}
-        className={`fixed inset-0 z-[45] bg-black transition-opacity duration-300 lg:hidden ${
+        className={`fixed inset-0 z-[45] bg-black transition-opacity duration-300 xl:hidden ${
           menuOpen
             ? "visible opacity-100"
             : "pointer-events-none invisible opacity-0"
@@ -189,21 +240,23 @@ export default function Navbar() {
           {/* MOBILE ACTIONS */}
 
           <div className="mt-auto pt-8">
+            <LangSwitch className="mb-5" />
+
             <Link
               href="/book"
               onClick={closeMenu}
               className="block rounded-full bg-red-600 py-4 text-center font-semibold uppercase tracking-wider text-white shadow-lg shadow-red-900/20 transition hover:bg-red-700"
             >
-              Rezervo
+              {t.book}
             </Link>
 
             <a
-              href="https://wa.me/38349833888?text=Hello!%20I%20would%20like%20to%20ask%20about%20a%20holiday."
+              href={whatsappHref}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-3 block rounded-full border border-white/30 py-4 text-center font-semibold text-white transition hover:bg-white hover:text-black"
             >
-              Chat on WhatsApp
+              {t.whatsapp}
             </a>
 
             <a

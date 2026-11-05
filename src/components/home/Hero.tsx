@@ -4,8 +4,35 @@ import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { busTours } from "@/data/bus-tours";
+import { useLang } from "@/components/LanguageProvider";
 
 const heroImage = "/images/hero/home.jpg";
+
+// All the words here, in both languages. Change them here.
+const labels = {
+  sq: {
+    eyebrow: "Partneri juaj i besuar i udhëtimit",
+    line1: "Nga Kosova,",
+    line2: "drejt botës.",
+    special: "Ofertë speciale",
+    perPerson: "për person",
+    seeTrip: "Shiko udhëtimin",
+    offers: "Shiko ofertat tona",
+    whatsapp: "Na shkruaj në WhatsApp",
+    alt: "Krahu i një avioni mbi retë në perëndim të diellit",
+  },
+  en: {
+    eyebrow: "Your Trusted Travel Partner",
+    line1: "From Kosova,",
+    line2: "to the world.",
+    special: "Special offer",
+    perPerson: "per person",
+    seeTrip: "See the trip",
+    offers: "See our offers",
+    whatsapp: "Message us on WhatsApp",
+    alt: "Airplane wing over clouds at sunset",
+  },
+};
 
 function getToday() {
   const d = new Date();
@@ -16,6 +43,8 @@ function getToday() {
 const subscribe = () => () => {};
 
 export default function Hero() {
+  const { lang } = useLang();
+  const t = labels[lang];
   const reduce = useReducedMotion();
   const today = useSyncExternalStore(subscribe, getToday, () => "");
   const [showOffer, setShowOffer] = useState(false);
@@ -43,13 +72,14 @@ export default function Hero() {
   }, [hasOffer, reduce, showOffer]);
 
   const showingOffer = showOffer && !!offer && !reduce;
+  const offerTitle = offer ? (lang === "en" && offer.tour.en ? offer.tour.en.title : offer.tour.title) : "";
 
   return (
     <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-black sm:min-h-screen">
       <motion.img
         src={heroImage}
+        alt={t.alt}
         fetchPriority="high"
-        alt="Airplane wing over clouds at sunset"
         className="absolute inset-0 h-full w-full object-cover object-[80%_47%] opacity-50 sm:object-[center_47%] sm:opacity-100"
         initial={{ scale: 1 }}
         animate={{ scale: reduce ? 1 : 1.1 }}
@@ -69,13 +99,13 @@ export default function Hero() {
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="flex flex-col items-center"
               >
-                <p className="text-[11px] font-bold uppercase tracking-wider text-white/70 sm:text-sm">
-                  Your Trusted Travel Partner
+                <p className="text-balance text-[11px] font-bold uppercase tracking-wider text-white/70 sm:text-sm">
+                  {t.eyebrow}
                 </p>
-                <h1 className="mt-5 text-4xl font-extrabold uppercase leading-[1.1] tracking-wide sm:text-6xl lg:text-7xl">
-                  From Kosova,
+                <h1 className="mt-5 break-words text-4xl font-extrabold uppercase leading-[1.1] tracking-wide sm:text-6xl lg:text-7xl">
+                  {t.line1}
                   <br />
-                  <span className="text-red-500">to the world.</span>
+                  <span className="text-red-500">{t.line2}</span>
                 </h1>
               </motion.div>
             ) : (
@@ -88,20 +118,20 @@ export default function Hero() {
                 className="flex flex-col items-center"
               >
                 <p className="rounded-full bg-red-600/20 px-3 py-1 text-[11px] font-bold uppercase tracking-wider text-red-400 sm:text-sm">
-                  Ofertë speciale
+                  {t.special}
                 </p>
-                <h2 className="mt-4 text-4xl font-extrabold uppercase leading-[1.1] tracking-wide sm:text-6xl lg:text-7xl">
-                  {offer.tour.title}
+                <h2 className="mt-4 break-words text-4xl font-extrabold uppercase leading-[1.1] tracking-wide sm:text-6xl lg:text-7xl">
+                  {offerTitle}
                 </h2>
                 <p className="mt-3 text-lg text-gray-200 sm:text-2xl">
                   {offer.next.start.split("-").reverse().join(".")} ·{" "}
-                  <span className="font-bold text-red-500">{offer.price}€</span> për person
+                  <span className="font-bold text-red-500">{offer.price}€</span> {t.perPerson}
                 </p>
                 <Link
                   href="/#udhetime"
                   className="mt-4 text-sm font-bold text-white underline underline-offset-4 hover:text-red-400"
                 >
-                  Shiko udhëtimin &rarr;
+                  {t.seeTrip} &rarr;
                 </Link>
               </motion.div>
             )}
@@ -109,19 +139,19 @@ export default function Hero() {
         </div>
 
         <div className="mx-auto mt-6 flex w-full max-w-xs flex-col gap-3 sm:max-w-none sm:flex-row sm:justify-center sm:gap-4">
-          <a
-            href="/destinations"
+          <Link
+            href="/offers"
             className="rounded-full bg-red-600 px-8 py-3.5 text-center text-base font-bold text-white transition hover:bg-red-700"
           >
-            See our offers
-          </a>
+            {t.offers}
+          </Link>
           <a
             href="https://wa.me/38349833888"
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full border border-white/50 px-8 py-3.5 text-center text-base font-bold text-white transition hover:border-white hover:bg-white hover:text-black"
           >
-            Message us on WhatsApp
+            {t.whatsapp}
           </a>
         </div>
       </div>
