@@ -6,59 +6,125 @@ import { Check, MessageCircle, Minus, Plus, X } from "lucide-react";
 import { allHotels, type Country } from "@/data/all-hotels";
 import { allBoards, boardLabels, type Board } from "@/data/hotel-pricing";
 import { addDays, boardsFor, calcQuote, formatDate } from "@/lib/booking";
+import { useLang, type Lang } from "@/components/LanguageProvider";
 import Dropdown, { type DropdownGroup } from "./Dropdown";
 
-// All the words in this form. Change them here.
+// All the words in this form, in both languages. Change them here.
 const labels = {
-  step1: "Ku dëshiron të shkosh?",
-  step2: "Hoteli dhe shërbimi",
-  step3: "Datat dhe udhëtarët",
-  summary: "Përmbledhja",
-  chooseHotel: "Zgjidh hotelin",
-  searchHotel: "Kërko hotelin...",
-  noHotel: "Nuk u gjet asnjë hotel",
-  dontKnow: "Nuk e di ende, më këshilloni",
-  placeLabel: "Qyteti, zona ose hoteli (opsionale)",
-  checkIn: "Data e nisjes (opsionale)",
-  nights: "Sa net",
-  checkOut: "Kthimi",
-  service: "Service (optional)",
-  adults: "Të rritur",
-  children: "Fëmijë",
-  addChild: "Shto fëmijë",
-  years: "vjeç",
-  notes: "Shënime (opsionale)",
-  total: "Totali i vlerësuar",
-  disclaimer:
-    "Çmim orientues. Disponueshmërinë dhe çmimin final i konfirmojmë ne në WhatsApp.",
-  send: "Kërko ofertë në WhatsApp",
-  pickFirst: "Zgjidh destinacionin për të vazhduar",
-  rowDestination: "Destinacioni",
-  rowHotel: "Hoteli",
-  rowDates: "Data",
-  rowService: "Service",
-  rowGuests: "Udhëtarët",
-  notSet: "—",
+  sq: {
+    step1: "Ku dëshiron të shkosh?",
+    step2: "Hoteli dhe shërbimi",
+    step3: "Datat dhe udhëtarët",
+    summary: "Përmbledhja",
+    chooseHotel: "Zgjidh hotelin",
+    searchHotel: "Kërko hotelin...",
+    noHotel: "Nuk u gjet asnjë hotel",
+    dontKnow: "Nuk e di ende, më këshilloni",
+    placeLabel: "Qyteti, zona ose hoteli (opsionale)",
+    checkIn: "Data e nisjes (opsionale)",
+    nights: "Sa net",
+    checkOut: "Kthimi",
+    service: "Shërbimi (opsionale)",
+    adults: "Të rritur",
+    children: "Fëmijë",
+    addChild: "Shto fëmijë",
+    years: "vjeç",
+    remove: "Hiq",
+    notes: "Shënime (opsionale)",
+    total: "Totali i vlerësuar",
+    disclaimer:
+      "Çmim orientues. Disponueshmërinë dhe çmimin final i konfirmojmë ne në WhatsApp.",
+    send: "Kërko ofertë në WhatsApp",
+    pickFirst: "Zgjidh destinacionin për të vazhduar",
+    rowDestination: "Destinacioni",
+    rowHotel: "Hoteli",
+    rowDates: "Data",
+    rowService: "Shërbimi",
+    rowGuests: "Udhëtarët",
+    notSet: "—",
+    // WhatsApp message
+    msgIntro: "Përshëndetje! Dua një ofertë:",
+    msgDestination: "Destinacioni",
+    msgHotel: "Hoteli",
+    msgHotelOrArea: "Hoteli / zona",
+    msgDate: "Data",
+    msgNights: "net",
+    msgNoDate: "Data: ende pa vendosur",
+    msgService: "Shërbimi",
+    msgAdults: "Të rritur",
+    msgChildren: "Fëmijë",
+    msgAges: "mosha",
+    msgPrice: "Çmimi orientues",
+    msgNotes: "Shënime",
+  },
+  en: {
+    step1: "Where do you want to go?",
+    step2: "Hotel and service",
+    step3: "Dates and travellers",
+    summary: "Summary",
+    chooseHotel: "Choose a hotel",
+    searchHotel: "Search for a hotel...",
+    noHotel: "No hotel found",
+    dontKnow: "I don't know yet, advise me",
+    placeLabel: "City, area or hotel (optional)",
+    checkIn: "Departure date (optional)",
+    nights: "How many nights",
+    checkOut: "Return",
+    service: "Service (optional)",
+    adults: "Adults",
+    children: "Children",
+    addChild: "Add a child",
+    years: "yrs",
+    remove: "Remove",
+    notes: "Notes (optional)",
+    total: "Estimated total",
+    disclaimer:
+      "Guide price. We confirm availability and the final price on WhatsApp.",
+    send: "Request an offer on WhatsApp",
+    pickFirst: "Choose a destination to continue",
+    rowDestination: "Destination",
+    rowHotel: "Hotel",
+    rowDates: "Dates",
+    rowService: "Service",
+    rowGuests: "Travellers",
+    notSet: "—",
+    msgIntro: "Hello! I would like an offer:",
+    msgDestination: "Destination",
+    msgHotel: "Hotel",
+    msgHotelOrArea: "Hotel / area",
+    msgDate: "Dates",
+    msgNights: "nights",
+    msgNoDate: "Dates: not decided yet",
+    msgService: "Service",
+    msgAdults: "Adults",
+    msgChildren: "Children",
+    msgAges: "ages",
+    msgPrice: "Guide price",
+    msgNotes: "Notes",
+  },
 };
 
+type L = Record<Lang, string>;
+const w = (sq: string, en: string): L => ({ sq, en });
+
 // image: optional photo. Without one the tile gets a dark red background.
-type Dest = { id: string; label: string; sub: string; country?: Country; image?: string };
+type Dest = { id: string; label: L; sub: L; country?: Country; image?: string };
 
 const destinations: Dest[] = [
-  { id: "antalya", label: "Antalya", sub: "Turkey", country: "Turkey", image: "/images/destinations/antalya/hero.jpg" },
-  { id: "egypt", label: "Hurghada", sub: "Egypt", country: "Egypt", image: "/images/destinations/egypt/hero.jpg" },
-  { id: "greece", label: "Greece", sub: "Islands & coast", country: "Greece", image: "/images/destinations/greece/hero.jpg" },
-  { id: "europe", label: "Europe", sub: "Cities", image: "/images/destinations/italy/itali.jpg" },
-  { id: "albania", label: "Albania", sub: "Coast", country: "Albania", image: "/images/destinations/albania/albania.jpg" },
-  { id: "dubai", label: "Dubai", sub: "UAE", image: "/images/offers/dubai.jpg" },
-  { id: "other", label: "Other", sub: "Tell us", image: "/images/destinations/switzerland/switzerland.jpg" },
+  { id: "antalya", label: w("Antalya", "Antalya"), sub: w("Turqi", "Turkey"), country: "Turkey", image: "/images/destinations/antalya/hero.jpg" },
+  { id: "egypt", label: w("Hurghada", "Hurghada"), sub: w("Egjipt", "Egypt"), country: "Egypt", image: "/images/destinations/egypt/hero.jpg" },
+  { id: "greece", label: w("Greqi", "Greece"), sub: w("Ishuj & bregdet", "Islands & coast"), country: "Greece", image: "/images/destinations/greece/hero.jpg" },
+  { id: "europe", label: w("Evropë", "Europe"), sub: w("Qytete", "Cities"), image: "/images/destinations/italy/itali.jpg" },
+  { id: "albania", label: w("Shqipëri", "Albania"), sub: w("Bregdet", "Coast"), country: "Albania", image: "/images/destinations/albania/albania.jpg" },
+  { id: "dubai", label: w("Dubai", "Dubai"), sub: w("Emiratet", "UAE"), image: "/images/offers/dubai.jpg" },
+  { id: "other", label: w("Tjetër", "Other"), sub: w("Na trego", "Tell us"), image: "/images/destinations/switzerland/switzerland.jpg" },
 ];
 
 const field =
   "w-full rounded-xl border border-white/10 bg-neutral-950 px-4 py-3 text-white outline-none [color-scheme:dark] placeholder:text-gray-600 transition focus:border-red-500 focus:ring-2 focus:ring-red-500/20";
 const tag = "mb-1.5 block text-xs font-bold uppercase tracking-wider text-gray-400";
 const round =
-  "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-red-600 disabled:opacity-30";
+  "flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/10 transition hover:bg-red-600 disabled:opacity-30";
 const card =
   "rounded-3xl border border-white/10 bg-gradient-to-b from-neutral-900 to-neutral-950 p-4 sm:p-6";
 
@@ -81,9 +147,9 @@ function Stepper({
   onChange: (value: number) => void;
 }) {
   return (
-    <div className="flex items-center justify-between rounded-xl bg-neutral-950 px-4 py-2.5">
-      <span className="text-sm text-gray-300">{label}</span>
-      <div className="flex items-center gap-3">
+    <div className="flex items-center justify-between gap-3 rounded-xl bg-neutral-950 px-4 py-2.5">
+      <span className="min-w-0 text-sm text-gray-300">{label}</span>
+      <div className="flex shrink-0 items-center gap-3">
         <button type="button" aria-label={`${label} -`} disabled={value <= min} onClick={() => onChange(value - 1)} className={round}>
           <Minus size={16} />
         </button>
@@ -102,7 +168,7 @@ function StepTitle({ n, children }: { n: number; children: string }) {
       <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-sm shadow-lg shadow-red-900/40">
         {n}
       </span>
-      {children}
+      <span className="min-w-0 break-words">{children}</span>
     </h3>
   );
 }
@@ -110,13 +176,15 @@ function StepTitle({ n, children }: { n: number; children: string }) {
 function Row({ name, value }: { name: string; value: string }) {
   return (
     <div className="flex justify-between gap-4 border-b border-white/5 py-2 text-sm last:border-0">
-      <span className="text-gray-400">{name}</span>
-      <span className="text-right font-bold">{value}</span>
+      <span className="shrink-0 text-gray-400">{name}</span>
+      <span className="min-w-0 break-words text-right font-bold">{value}</span>
     </div>
   );
 }
 
 export default function RequestForm() {
+  const { lang } = useLang();
+  const t = labels[lang];
   const today = useSyncExternalStore(subscribe, getToday, () => "");
 
   const [destId, setDestId] = useState("");
@@ -137,7 +205,7 @@ export default function RequestForm() {
 
   const regions = Array.from(new Set(countryHotels.map((h) => h.region)));
   const hotelGroups: DropdownGroup[] = [
-    { options: [{ value: "", label: labels.dontKnow }] },
+    { options: [{ value: "", label: t.dontKnow }] },
     ...regions.map((region) => ({
       label: region,
       options: countryHotels
@@ -170,24 +238,24 @@ export default function RequestForm() {
     );
   }
 
-  const guestsText = `${adults} ${labels.adults.toLowerCase()}${
-    childAges.length > 0 ? `, ${childAges.length} ${labels.children.toLowerCase()}` : ""
+  const guestsText = `${adults} ${t.adults.toLowerCase()}${
+    childAges.length > 0 ? `, ${childAges.length} ${t.children.toLowerCase()}` : ""
   }`;
 
   const message = [
-    "Përshëndetje! Dua një ofertë:",
-    dest ? `Destinacioni: ${dest.label} (${dest.sub})` : "",
-    hotel ? `Hoteli: ${hotel.name}` : place ? `Hoteli / zona: ${place}` : "",
+    t.msgIntro,
+    dest ? `${t.msgDestination}: ${dest.label[lang]} (${dest.sub[lang]})` : "",
+    hotel ? `${t.msgHotel}: ${hotel.name}` : place ? `${t.msgHotelOrArea}: ${place}` : "",
     checkIn
-      ? `Data: ${formatDate(checkIn)} - ${formatDate(checkOut)} (${nights} net)`
-      : "Data: ende pa vendosur",
-    activeBoard ? `Shërbimi: ${boardLabels[activeBoard]}` : "",
-    `Të rritur: ${adults}`,
+      ? `${t.msgDate}: ${formatDate(checkIn)} - ${formatDate(checkOut)} (${nights} ${t.msgNights})`
+      : t.msgNoDate,
+    activeBoard ? `${t.msgService}: ${boardLabels[activeBoard]}` : "",
+    `${t.msgAdults}: ${adults}`,
     childAges.length > 0
-      ? `Fëmijë: ${childAges.length} (mosha: ${childAges.join(", ")})`
-      : "Fëmijë: 0",
-    quote && quote.ok ? `Çmimi orientues: ${quote.total}€` : "",
-    notes ? `Shënime: ${notes}` : "",
+      ? `${t.msgChildren}: ${childAges.length} (${t.msgAges}: ${childAges.join(", ")})`
+      : `${t.msgChildren}: 0`,
+    quote && quote.ok ? `${t.msgPrice}: ${quote.total}€` : "",
+    notes ? `${t.msgNotes}: ${notes}` : "",
   ]
     .filter(Boolean)
     .join("\n");
@@ -198,7 +266,7 @@ export default function RequestForm() {
     <div className="space-y-5">
       {/* Step 1: destinations in one horizontal row */}
       <div className={card}>
-        <StepTitle n={1}>{labels.step1}</StepTitle>
+        <StepTitle n={1}>{t.step1}</StepTitle>
         <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-1 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-4 sm:overflow-visible sm:px-0 lg:grid-cols-7 [&::-webkit-scrollbar]:hidden">
           {destinations.map((d) => {
             const selected = destId === d.id;
@@ -217,7 +285,7 @@ export default function RequestForm() {
                 {d.image && (
                   <Image
                     src={d.image}
-                    alt={d.label}
+                    alt={d.label[lang]}
                     fill
                     sizes="(min-width: 1024px) 150px, 36vw"
                     className="object-cover transition duration-500 group-hover:scale-105"
@@ -230,10 +298,10 @@ export default function RequestForm() {
                   </span>
                 )}
                 <span className="absolute inset-x-0 bottom-0 p-3">
-                  <span className="block text-sm font-extrabold uppercase tracking-wide">
-                    {d.label}
+                  <span className="block break-words text-sm font-extrabold uppercase tracking-wide">
+                    {d.label[lang]}
                   </span>
-                  <span className="block text-xs text-gray-300">{d.sub}</span>
+                  <span className="block text-xs text-gray-300">{d.sub[lang]}</span>
                 </span>
               </button>
             );
@@ -242,9 +310,9 @@ export default function RequestForm() {
       </div>
 
       {!dest && (
-        <span className="flex items-center justify-center gap-2 rounded-full bg-white/10 py-4 text-sm font-bold text-gray-400">
-          <MessageCircle size={18} />
-          {labels.pickFirst}
+        <span className="flex items-center justify-center gap-2 rounded-full bg-white/10 px-4 py-4 text-center text-sm font-bold text-gray-400">
+          <MessageCircle size={18} className="shrink-0" />
+          {t.pickFirst}
         </span>
       )}
 
@@ -252,34 +320,34 @@ export default function RequestForm() {
         <div className="grid gap-5 lg:grid-cols-3 lg:items-start">
           {/* Step 2 */}
           <div className={card}>
-            <StepTitle n={2}>{labels.step2}</StepTitle>
+            <StepTitle n={2}>{t.step2}</StepTitle>
             <div className="space-y-5">
               {countryHotels.length > 0 ? (
                 <Dropdown
                   value={slug}
                   onChange={setSlug}
                   groups={hotelGroups}
-                  placeholder={labels.chooseHotel}
+                  placeholder={t.chooseHotel}
                   searchable
-                  searchPlaceholder={labels.searchHotel}
-                  emptyText={labels.noHotel}
+                  searchPlaceholder={t.searchHotel}
+                  emptyText={t.noHotel}
                 />
               ) : (
                 <div>
-                  <label className={tag}>{labels.placeLabel}</label>
+                  <label className={tag}>{t.placeLabel}</label>
                   <input type="text" value={place} onChange={(e) => setPlace(e.target.value)} className={field} />
                 </div>
               )}
 
               <div>
-                <p className={tag}>{labels.service}</p>
+                <p className={tag}>{t.service}</p>
                 <div className="flex flex-wrap gap-2">
                   {boards.map((b) => (
                     <button
                       key={b}
                       type="button"
                       onClick={() => setBoard(activeBoard === b ? "" : b)}
-                      className={`rounded-full px-4 py-2 text-sm font-bold transition ${
+                      className={`min-h-[44px] rounded-full px-4 py-2 text-sm font-bold transition ${
                         activeBoard === b
                           ? "bg-red-600 text-white shadow-lg shadow-red-900/40"
                           : "border border-white/10 bg-neutral-950 text-gray-300 hover:border-red-500/60 hover:text-white"
@@ -295,17 +363,23 @@ export default function RequestForm() {
 
           {/* Step 3 */}
           <div className={card}>
-            <StepTitle n={3}>{labels.step3}</StepTitle>
+            <StepTitle n={3}>{t.step3}</StepTitle>
             <div className="space-y-4">
               <div>
-                <label className={tag}>{labels.checkIn}</label>
-                <input type="date" min={today} value={checkIn} onChange={(e) => setCheckIn(e.target.value)} className={field} />
+                <label className={tag}>{t.checkIn}</label>
+                <input
+                  type="date"
+                  min={today}
+                  value={checkIn}
+                  onChange={(e) => setCheckIn(e.target.value)}
+                  className={`${field} block min-h-[3rem] min-w-0 max-w-full appearance-none text-left`}
+                />
               </div>
 
               <div>
-                <p className={tag}>{labels.nights}</p>
+                <p className={tag}>{t.nights}</p>
                 <Stepper
-                  label={checkOut ? `→ ${formatDate(checkOut)}` : labels.checkOut}
+                  label={checkOut ? `→ ${formatDate(checkOut)}` : t.checkOut}
                   value={nights}
                   min={1}
                   max={30}
@@ -314,26 +388,26 @@ export default function RequestForm() {
               </div>
 
               <div className="space-y-2">
-                <Stepper label={labels.adults} value={adults} min={1} max={10} onChange={setAdults} />
+                <Stepper label={t.adults} value={adults} min={1} max={10} onChange={setAdults} />
 
                 {childAges.map((age, index) => (
                   <div key={index} className="flex items-center justify-between gap-2 rounded-xl bg-neutral-950 px-4 py-2.5">
-                    <span className="text-sm text-gray-300">
-                      {labels.children} {index + 1}
+                    <span className="min-w-0 text-sm text-gray-300">
+                      {t.children} {index + 1}
                     </span>
-                    <div className="flex items-center gap-2">
+                    <div className="flex shrink-0 items-center gap-2">
                       <button type="button" aria-label="-" disabled={age <= 0} onClick={() => changeAge(index, -1)} className={round}>
                         <Minus size={16} />
                       </button>
                       <span className="w-14 text-center text-sm font-bold">
-                        {age} {labels.years}
+                        {age} {t.years}
                       </span>
                       <button type="button" aria-label="+" disabled={age >= 17} onClick={() => changeAge(index, 1)} className={round}>
                         <Plus size={16} />
                       </button>
                       <button
                         type="button"
-                        aria-label="Hiq"
+                        aria-label={t.remove}
                         onClick={() => setChildAges(childAges.filter((_, i) => i !== index))}
                         className={`${round} ml-1`}
                       >
@@ -347,16 +421,16 @@ export default function RequestForm() {
                   <button
                     type="button"
                     onClick={() => setChildAges([...childAges, 5])}
-                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 py-2.5 text-sm font-bold text-gray-300 transition hover:border-red-500 hover:text-white"
+                    className="flex min-h-[44px] w-full items-center justify-center gap-2 rounded-xl border border-dashed border-white/20 py-2.5 text-sm font-bold text-gray-300 transition hover:border-red-500 hover:text-white"
                   >
                     <Plus size={16} />
-                    {labels.addChild}
+                    {t.addChild}
                   </button>
                 )}
               </div>
 
               <div>
-                <label className={tag}>{labels.notes}</label>
+                <label className={tag}>{t.notes}</label>
                 <textarea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} className={field} />
               </div>
             </div>
@@ -365,22 +439,22 @@ export default function RequestForm() {
           {/* Step 4: summary + send (stays visible on desktop while scrolling) */}
           <div className="space-y-4 lg:sticky lg:top-28">
             <div className={card}>
-              <h3 className="mb-3 text-base font-extrabold uppercase tracking-wide">{labels.summary}</h3>
-              <Row name={labels.rowDestination} value={dest.label} />
-              <Row name={labels.rowHotel} value={hotel?.name ?? (place || labels.notSet)} />
+              <h3 className="mb-3 text-base font-extrabold uppercase tracking-wide">{t.summary}</h3>
+              <Row name={t.rowDestination} value={dest.label[lang]} />
+              <Row name={t.rowHotel} value={hotel?.name ?? (place || t.notSet)} />
               <Row
-                name={labels.rowDates}
-                value={checkIn ? `${formatDate(checkIn)} → ${formatDate(checkOut)}` : labels.notSet}
+                name={t.rowDates}
+                value={checkIn ? `${formatDate(checkIn)} → ${formatDate(checkOut)}` : t.notSet}
               />
-              <Row name={labels.rowService} value={activeBoard ? boardLabels[activeBoard] : labels.notSet} />
-              <Row name={labels.rowGuests} value={guestsText} />
+              <Row name={t.rowService} value={activeBoard ? boardLabels[activeBoard] : t.notSet} />
+              <Row name={t.rowGuests} value={guestsText} />
             </div>
 
             {quote && quote.ok && (
               <div className="rounded-3xl border border-red-500/50 bg-gradient-to-br from-red-600/20 to-red-950/20 p-5 shadow-[0_0_40px_rgba(220,38,38,0.2)]">
-                <p className="text-xs font-bold uppercase tracking-wider text-gray-300">{labels.total}</p>
+                <p className="text-xs font-bold uppercase tracking-wider text-gray-300">{t.total}</p>
                 <p className="mt-1 text-4xl font-extrabold">{quote.total}€</p>
-                <p className="mt-2 text-xs text-gray-400">{labels.disclaimer}</p>
+                <p className="mt-2 text-xs text-gray-400">{t.disclaimer}</p>
               </div>
             )}
 
@@ -388,10 +462,10 @@ export default function RequestForm() {
               href={href}
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center justify-center gap-2 rounded-full bg-red-600 py-4 text-lg font-bold text-white shadow-lg shadow-red-900/40 transition hover:bg-red-700"
+              className="flex min-h-[52px] items-center justify-center gap-2 rounded-full bg-red-600 px-4 py-4 text-center text-lg font-bold text-white shadow-lg shadow-red-900/40 transition hover:bg-red-700"
             >
-              <MessageCircle size={20} />
-              {labels.send}
+              <MessageCircle size={20} className="shrink-0" />
+              {t.send}
             </a>
           </div>
         </div>
