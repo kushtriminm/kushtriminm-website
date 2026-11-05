@@ -238,7 +238,7 @@ export const busTours: BusTour[] = [
   {
     slug: "pogradec-weekend",
     title: "Fundjavë në Pogradec & Korçë",
-    active: true,
+    active: false,
     duration: "2 netë / 3 ditë",
     price: 80,
     priceNote: "për person",
@@ -313,7 +313,7 @@ export const busTours: BusTour[] = [
     },
   },
   {
-    slug: "pogradec-2-days",
+    slug: "pogradec-2-days", image: "/images/bus-tours/pogradec-2-days.jpg",
     title: "Fundjavë në Pogradec, Strugë & Ohër",
     active: true,
     duration: "1 natë / 2 ditë",

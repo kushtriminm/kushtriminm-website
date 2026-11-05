@@ -13,8 +13,8 @@ export default function Dropdown({
   groups,
   placeholder,
   searchable = false,
-  searchPlaceholder = "Kërko...",
-  emptyText = "Asnjë rezultat",
+  searchPlaceholder = "Search...",
+  emptyText = "No results",
 }: {
   value: string;
   onChange: (value: string) => void;

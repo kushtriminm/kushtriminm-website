@@ -5,13 +5,14 @@ import "./globals.css";
 import Navbar from "@/components/home/Navbar";
 import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
+import FaqAssistant from "@/components/FaqAssistant";
 import { LanguageProvider } from "@/components/LanguageProvider";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushtriminm.com"),
   title: "Kushtrimi NM Worldwide | Agjenci Udhëtimi në Gjakovë",
   description:
-    "Kushtrimi NM Worldwide - agjencia e udhëtimit në Gjakovë. Pushime, fluturime, hotele dhe udhëtime me autobus në Turqi, Egjipt, Greqi, Shqipëri dhe më gjerë.",
+    "Kushtrimi NM Worldwide - agjencia e udhëtimit në Gjakovë. Pushime, fluturime, hotele dhe udhëtime me guidë në Turqi, Egjipt, Greqi, Shqipëri dhe më gjerë.",
   keywords: [
     "Kushtrimi NM Worldwide",
     "kushtrimi nm",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Kushtrimi NM Worldwide",
     description:
-      "Pushime, fluturime, hotele dhe udhëtime me autobus, të organizuara personalisht nga Gjakova.",
+      "Pushime, fluturime, hotele dhe udhëtime me guidë, të organizuara personalisht nga Gjakova.",
     type: "website",
     url: "/",
     siteName: "Kushtrimi NM Worldwide",
@@ -85,6 +86,7 @@ export default function RootLayout({
           <Footer />
 
           <WhatsAppButton />
+          <FaqAssistant />
         </LanguageProvider>
       </body>
     </html>

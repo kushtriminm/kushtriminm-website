@@ -2,7 +2,7 @@
 // - d("start", "end", total): "total" is the operator's price for 2 people.
 //   The price per person is worked out automatically (total / 2, rounded up to end in 9).
 // - Past dates hide themselves. An offer with no future dates hides itself.
-// - image: add later, e.g. "/images/offers/paris.jpg" (file goes in public/images/offers/)
+// - image: add later, e.g. "/images/offers/paris-disneyland.jpg" (file goes in public/images/offers/)
 // - active: false hides an offer.
 
 export type Region = "italy" | "spain" | "europe" | "middleeast";
@@ -27,12 +27,33 @@ export type Offer = {
 
 const t = (sq: string, en: string): Text => ({ sq, en });
 const d = (start: string, end: string, total: number): Departure => ({ start, end, total });
+
+// "3 netë / 4 ditë": nights first, then days.
 const dur = (days: number) =>
-  t(`${days} ditë / ${days - 1} netë`, `${days} days / ${days - 1} nights`);
+  t(
+    `${days - 1} ${days === 2 ? "natë" : "netë"} / ${days} ditë`,
+    `${days - 1} ${days === 2 ? "night" : "nights"} / ${days} days`
+  );
 
 // Total for 2 people -> price per person, rounded up to a number ending in 9.
 export function perPerson(total: number) {
   return Math.ceil((total / 2 - 9) / 10) * 10 + 9;
+}
+
+// The lines shown on the offer card. Nights are worked out from the first departure.
+export function planeHighlights(offer: Offer): Text[] {
+  const first = offer.departures[0];
+  const days = Math.round((Date.parse(first.end) - Date.parse(first.start)) / 86400000) + 1;
+  const nights = Math.max(1, days - 1);
+  return [
+    t("Fluturim vajtje-ardhje nga Tirana", "Return flights from Tirana"),
+    t(
+      `${nights} ${nights === 1 ? "natë" : "netë"} akomodim në hotel`,
+      `${nights} ${nights === 1 ? "night" : "nights"} hotel accommodation`
+    ),
+    t("Mëngjes çdo ditë", "Breakfast every day"),
+    t("Shoqërues shqiptar", "Albanian-speaking companion"),
+  ];
 }
 
 export function allIncludes(offer: Offer): Text[] {
@@ -82,7 +103,7 @@ export const CONDITIONS: Text[] = [
 
 export const offers: Offer[] = [
   {
-    slug: "paris-disneyland",
+    slug: "paris-disneyland", image: "/images/offers/paris-disneyland.jpg",
     active: true,
     region: "europe",
     title: t("Paris & Disneyland", "Paris & Disneyland"),
@@ -119,7 +140,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "dubai-abu-dhabi",
+    slug: "dubai-abu-dhabi", image: "/images/offers/dubai-abu-dhabi.jpg",
     active: true,
     region: "middleeast",
     title: t("Dubai & Abu Dhabi", "Dubai & Abu Dhabi"),
@@ -161,7 +182,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "catania-palermo",
+    slug: "catania-palermo", image: "/images/offers/catania-palermo.jpg",
     active: true,
     region: "italy",
     title: t("Catania & Palermo", "Catania & Palermo"),
@@ -179,7 +200,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "malta",
+    slug: "malta", image: "/images/offers/malta.jpg",
     active: true,
     region: "europe",
     title: t("Maltë", "Malta"),
@@ -204,7 +225,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "napoli-sorrento-salerno",
+    slug: "napoli-sorrento-salerno", image: "/images/offers/napoli-sorrento-salerno.jpg",
     active: true,
     region: "italy",
     title: t("Napoli, Sorrento & Salerno", "Naples, Sorrento & Salerno"),
@@ -232,7 +253,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "barcelona-madrid",
+    slug: "barcelona-madrid", image: "/images/offers/barcelona-madrid.jpg",
     active: true,
     region: "spain",
     title: t("Barcelonë & Madrid", "Barcelona & Madrid"),
@@ -253,7 +274,7 @@ export const offers: Offer[] = [
     includes: [t("4 netë: 1 në Barcelonë, 1 në Saragosa, 2 në Madrid", "4 nights: 1 in Barcelona, 1 in Zaragoza, 2 in Madrid")],
   },
   {
-    slug: "puglia",
+    slug: "puglia", image: "/images/offers/puglia.jpg",
     active: true,
     region: "italy",
     title: t("Puglia: Alberobello, Otranto & Taranto", "Puglia: Alberobello, Otranto & Taranto"),
@@ -268,7 +289,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "kalabria",
+    slug: "kalabria", image: "/images/offers/kalabria.jpg",
     active: true,
     region: "italy",
     title: t("Kalabria & arbëreshët", "Calabria & the Arbëreshë villages"),
@@ -287,7 +308,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "valencia-sevilje-madrid",
+    slug: "valencia-sevilje-madrid", image: "/images/offers/valencia-sevilje-madrid.jpg",
     active: true,
     region: "spain",
     title: t("Valencia, Sevilje & Madrid", "Valencia, Seville & Madrid"),
@@ -306,7 +327,7 @@ export const offers: Offer[] = [
     includes: [t("5 netë akomodim", "5 nights accommodation")],
   },
   {
-    slug: "colmar-strasburg",
+    slug: "colmar-strasburg", image: "/images/offers/colmar-strasburg.jpg",
     active: true,
     region: "europe",
     title: t("Colmar & Strasburg", "Colmar & Strasbourg"),
@@ -326,7 +347,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "amsterdam-bruksel",
+    slug: "amsterdam-bruksel", image: "/images/offers/amsterdam-bruksel.jpg",
     active: true,
     region: "europe",
     title: t("Amsterdam & Bruksel", "Amsterdam & Brussels"),
@@ -344,7 +365,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "rome",
+    slug: "rome", image: "/images/offers/rome.jpg",
     active: true,
     region: "italy",
     title: t("Romë", "Rome"),
@@ -361,7 +382,7 @@ export const offers: Offer[] = [
     includes: [t("1 natë akomodim", "1 night accommodation")],
   },
   {
-    slug: "barcelona",
+    slug: "barcelona", image: "/images/offers/barcelona.jpg",
     active: true,
     region: "spain",
     title: t("Barcelonë", "Barcelona"),
@@ -391,7 +412,7 @@ export const offers: Offer[] = [
     ],
   },
   {
-    slug: "milano-liqenet",
+    slug: "milano-liqenet", image: "/images/offers/milano-liqenet.jpg",
     active: true,
     region: "italy",
     title: t("Milano & liqenet", "Milan & the lakes"),
