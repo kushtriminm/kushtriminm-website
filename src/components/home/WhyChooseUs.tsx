@@ -1,45 +1,77 @@
-import { MessageCircle, Plane, ShieldCheck, Check } from "lucide-react";
+"use client";
 
-// Edit the four reasons here. Keep them true: they are what customers say about you.
-const reasons = [
-  {
-    icon: MessageCircle,
-    title: "Përgjigje e shpejtë",
-    text: "Na shkruaj në WhatsApp, na telefono ose na vizito në zyrë. Të përgjigjemi shpejt dhe me durim.",
+import { MessageCircle, Plane, ShieldCheck, Check } from "lucide-react";
+import { useLang } from "@/components/LanguageProvider";
+
+// Edit the four reasons here, in both languages. Keep them true: they are what customers say about you.
+const content = {
+  sq: {
+    eyebrow: "Pse ne?",
+    heading: "Pse të udhëtosh me ne",
+    reasons: [
+      {
+        title: "Përgjigje e shpejtë",
+        text: "Na shkruaj në WhatsApp, na telefono ose na vizito në zyrë. Të përgjigjemi shpejt dhe me durim.",
+      },
+      {
+        title: "Transparencë e plotë",
+        text: "Çmimet, kushtet dhe pagesat shtesë të shpjegohen qartë që në fillim, pa surpriza.",
+      },
+      {
+        title: "Gjithçka e rregulluar",
+        text: "Fluturime, hotele dhe udhëtime me guidë, të organizuara nga një vend i vetëm.",
+      },
+      {
+        title: "Kudo në botë",
+        text: "Nga qytetet evropiane te plazhet e verës, të ndihmojmë të gjesh udhëtimin e duhur.",
+      },
+    ],
   },
-  {
-    icon: ShieldCheck,
-    title: "Transparencë e plotë",
-    text: "Çmimet, kushtet dhe pagesat shtesë të shpjegohen qartë që në fillim, pa surpriza.",
+  en: {
+    eyebrow: "Why us?",
+    heading: "Why travel with us",
+    reasons: [
+      {
+        title: "Quick replies",
+        text: "Message us on WhatsApp, call us or visit the office. We reply quickly and patiently.",
+      },
+      {
+        title: "Full transparency",
+        text: "Prices, conditions and extra payments are explained clearly from the start, with no surprises.",
+      },
+      {
+        title: "Everything arranged",
+        text: "Flights, hotels and guided tours, organised from one place.",
+      },
+      {
+        title: "Anywhere in the world",
+        text: "From European cities to summer beaches, we help you find the right trip.",
+      },
+    ],
   },
-  {
-    icon: Check,
-    title: "Gjithçka e rregulluar",
-    text: "Fluturime, hotele dhe udhëtime me autobus, të organizuara nga një vend i vetëm.",
-  },
-  {
-    icon: Plane,
-    title: "Kudo në botë",
-    text: "Nga qytetet evropiane te plazhet e verës, të ndihmojmë të gjesh udhëtimin e duhur.",
-  },
-];
+};
+
+const icons = [MessageCircle, ShieldCheck, Check, Plane];
 
 export default function WhyChooseUs() {
+  const { lang } = useLang();
+  const t = content[lang];
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-20 sm:py-28">
       <div className="pointer-events-none absolute left-1/2 top-24 h-72 w-[28rem] -translate-x-1/2 rounded-full bg-red-600/15 blur-3xl" />
 
       <div className="relative mx-auto max-w-6xl">
         <div className="text-center">
-          <p className="text-sm font-bold uppercase text-red-500">Pse ne?</p>
-          <h2 className="mt-3 text-3xl font-extrabold uppercase tracking-wide text-white sm:text-5xl">
-            Pse të udhëtosh me ne
+          <p className="text-sm font-bold uppercase text-red-500">{t.eyebrow}</p>
+          <h2 className="mt-3 text-balance text-3xl font-extrabold uppercase tracking-wide text-white sm:text-5xl">
+            {t.heading}
           </h2>
         </div>
 
-        <div className="mt-12 grid grid-cols-2 gap-4 sm:mt-14 lg:grid-cols-4 lg:gap-6">
-          {reasons.map((item, index) => {
-            const Icon = item.icon;
+        <div className="mt-12 grid grid-cols-1 gap-4 min-[420px]:grid-cols-2 sm:mt-14 lg:grid-cols-4 lg:gap-6">
+          {t.reasons.map((item, index) => {
+            const Icon = icons[index];
 
             return (
               <div
@@ -56,12 +88,10 @@ export default function WhyChooseUs() {
                   <Icon size={22} />
                 </span>
 
-                <h3 className="relative mt-5 text-base font-extrabold uppercase leading-tight tracking-wide text-white sm:text-lg">
+                <h3 className="relative mt-5 break-words text-base font-extrabold uppercase leading-tight tracking-wide text-white sm:text-lg">
                   {item.title}
                 </h3>
-                <p className="relative mt-2 text-xs leading-5 text-gray-400 sm:text-sm sm:leading-6">
-                  {item.text}
-                </p>
+                <p className="relative mt-2 text-sm leading-6 text-gray-400">{item.text}</p>
               </div>
             );
           })}

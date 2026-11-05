@@ -1,40 +1,44 @@
-import { Quote, Star } from "lucide-react";
+"use client";
 
-// Real Google reviews, copied exactly as written. To add one, copy a block.
+import { Quote, Star } from "lucide-react";
+import { useLang } from "@/components/LanguageProvider";
+
+// Real Google reviews, copied exactly as written (in the language the customer wrote them).
+// To add one, copy a block. "trip" is the place they travelled to, in both languages.
 const reviews = [
   {
     name: "Vanesa K.",
-    trip: "Shqipëri",
+    trip: { sq: "Shqipëri", en: "Albania" },
     lang: "sq",
     text: "Sherbim shum i mir nga fillimi deri në fund! Staf korrekt, komunikim shum i mir . Jam shum e kenaqur dhe padyshim do ti zgjidhja perseri per udhetimet e ardhshme. ❤️",
   },
   {
     name: "Soara R.",
-    trip: "Budapest",
+    trip: { sq: "Budapest", en: "Budapest" },
     lang: "sq",
     text: "Shume e kenaqur per profesionalizmin e Kushtrim NM 🙌🏻🙌🏻",
   },
   {
     name: "Flora R.",
-    trip: "Turqi",
+    trip: { sq: "Turqi", en: "Turkey" },
     lang: "en",
     text: "Arranged many trips with them and always had the best experiences. They respond to all the questions you have regarding the trip and are always available to help for everything the costumer needs🙏🏻 highly recommend booking trips with them☺️",
   },
   {
     name: "Atdhe B.",
-    trip: "Gjermani",
+    trip: { sq: "Gjermani", en: "Germany" },
     lang: "en",
     text: "It was a pleasure working with your agency. A big thank you to Kushtrimi-NM Worldwide for their transparency and professionalism.",
   },
   {
     name: "Arianit K.",
-    trip: "Egjipt",
+    trip: { sq: "Egjipt", en: "Egypt" },
     lang: "en",
     text: "Excellent experience! Friendly staff, fast communication, and everything was handled perfectly. Thank you!",
   },
   {
     name: "Tatiana V.",
-    trip: "Maltë",
+    trip: { sq: "Maltë", en: "Malta" },
     lang: "pt",
     text: "Melhor atendimento !! Faz a diferença ter uma agência qualificada e um atendimento diferenciado. Amei!",
   },
@@ -42,19 +46,36 @@ const reviews = [
 
 const GOOGLE_LISTING = "https://maps.app.goo.gl/tMp9PKN37FJ7hCEXA";
 
+// All the words here, in both languages. Change them here.
+const labels = {
+  sq: {
+    eyebrow: "Vlerësime nga Google",
+    heading: "Klientë të kënaqur.",
+    swipe: "Rrëshqit për më shumë",
+    button: "Shiko të gjitha vlerësimet në Google",
+  },
+  en: {
+    eyebrow: "Google reviews",
+    heading: "Happy customers.",
+    swipe: "Swipe for more",
+    button: "See all reviews on Google",
+  },
+};
+
 export default function Testimonials() {
+  const { lang } = useLang();
+  const t = labels[lang];
+
   return (
     <section className="relative overflow-hidden bg-black px-5 py-14 sm:py-24">
       <div className="pointer-events-none absolute left-1/2 top-10 h-96 w-96 -translate-x-1/2 rounded-full bg-red-600/10 blur-3xl" />
 
       <div className="relative mx-auto max-w-7xl">
         <div className="text-center">
-          <p className="text-sm font-bold uppercase text-red-500">
-            Vlerësime nga Google
-          </p>
-          <h2 className="mt-3 text-3xl font-extrabold uppercase tracking-wide text-white sm:text-5xl">
-  Klientë të kënaqur.
-</h2>
+          <p className="text-sm font-bold uppercase text-red-500">{t.eyebrow}</p>
+          <h2 className="mt-3 text-balance text-3xl font-extrabold uppercase tracking-wide text-white sm:text-5xl">
+            {t.heading}
+          </h2>
         </div>
 
         {/* Phone: swipe sideways. Desktop: 3-column grid. */}
@@ -64,53 +85,41 @@ export default function Testimonials() {
               key={item.name}
               className="group relative flex w-[84%] shrink-0 snap-center flex-col rounded-[28px] border border-white/10 bg-neutral-900/70 p-6 transition hover:-translate-y-1 hover:border-red-500/60 hover:shadow-[0_0_40px_rgba(220,38,38,0.25)] md:w-auto md:p-8"
             >
-              <Quote
-                className="absolute right-6 top-6 text-red-500/30"
-                size={40}
-              />
+              <Quote className="absolute right-6 top-6 text-red-500/30" size={40} />
 
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((star) => (
-                  <Star
-                    key={star}
-                    size={18}
-                    className="fill-red-500 text-red-500"
-                  />
+                  <Star key={star} size={18} className="fill-red-500 text-red-500" />
                 ))}
               </div>
 
-              <p
-                lang={item.lang}
-                className="mt-5 flex-1 text-base leading-7 text-gray-300"
-              >
+              <p lang={item.lang} className="mt-5 flex-1 break-words text-base leading-7 text-gray-300">
                 &ldquo;{item.text}&rdquo;
               </p>
 
               <div className="mt-6 flex items-center gap-3">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-600 font-bold text-white">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-red-600 font-bold text-white">
                   {item.name.charAt(0)}
                 </div>
-                <div>
+                <div className="min-w-0">
                   <h3 className="font-bold text-white">{item.name}</h3>
-                  <p className="text-sm text-gray-400">&#9992; {item.trip}</p>
+                  <p className="text-sm text-gray-400">&#9992; {item.trip[lang]}</p>
                 </div>
               </div>
             </div>
           ))}
         </div>
 
-        <p className="mt-1 text-center text-xs text-gray-500 md:hidden">
-          Swipe for more &rarr;
-        </p>
+        <p className="mt-1 text-center text-xs text-gray-500 md:hidden">{t.swipe} &rarr;</p>
 
         <div className="mt-8 text-center">
           <a
             href={GOOGLE_LISTING}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-block rounded-full border border-white/30 px-8 py-3 text-sm font-bold text-white transition hover:bg-white hover:text-black"
+            className="inline-flex min-h-[48px] items-center justify-center rounded-full border border-white/30 px-8 py-3 text-sm font-bold text-white transition hover:bg-white hover:text-black"
           >
-            Shiko të gjitha vlerësimet në Google
+            {t.button}
           </a>
         </div>
       </div>

@@ -9,6 +9,8 @@ import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
 import BookButton from "@/components/booking/BookButton";
 import BookingModal from "@/components/booking/BookingModal";
+import Tr from "@/components/Tr";
+import WhatsAppLink from "@/components/WhatsAppLink";
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -29,21 +31,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-// All the words on this page. Change them here.
-const labels = {
-  back: "Të gjitha hotelet",
-  about: "Rreth hotelit",
-  facilities: "Çfarë ofron",
-  services: "Shërbimet e mundshme",
-  photoSoon: "Fotot vijnë së shpejti",
-  from: "nga",
-  perNight: "për person / natë",
-  askPrice: "Çmimi: pyet për ofertë",
-  book: "Rezervo / kontrollo disponueshmërinë",
-  whatsapp: "Na shkruaj në WhatsApp",
-  note: "Çmimet dhe vendet e lira i konfirmojmë ne.",
-};
-
 export default async function HotelPage({ params }: Props) {
   const { slug } = await params;
   const hotel = allHotels.find((item) => item.slug === slug);
@@ -52,7 +39,6 @@ export default async function HotelPage({ params }: Props) {
   const photos = hotelPhotos(hotel.slug, hotel.image, hotel.gallery);
   const boards = declaredBoards(hotel.slug);
   const from = fromPrice(hotel.slug);
-  const message = `Përshëndetje! Dua të pyes për ${hotel.name} (${hotel.destination}).`;
 
   return (
     <main className="bg-black text-white">
@@ -60,16 +46,16 @@ export default async function HotelPage({ params }: Props) {
         <div className="mx-auto max-w-6xl">
           <Link
             href="/hotels"
-            className="inline-flex items-center gap-2 text-sm text-gray-400 transition hover:text-white"
+            className="inline-flex min-h-[44px] items-center gap-2 text-sm text-gray-400 transition hover:text-white"
           >
             <ArrowLeft size={16} />
-            {labels.back}
+            <Tr sq="Të gjitha hotelet" en="All hotels" />
           </Link>
 
-          <p className="mt-6 text-sm font-bold uppercase text-red-500">
+          <p className="mt-4 text-sm font-bold uppercase text-red-500">
             {hotel.category} · {hotel.region}
           </p>
-          <h1 className="mt-2 text-2xl font-extrabold uppercase leading-tight tracking-wide sm:text-4xl">
+          <h1 className="mt-2 break-words text-2xl font-extrabold uppercase leading-tight tracking-wide sm:text-4xl">
             {hotel.name}
           </h1>
 
@@ -82,7 +68,7 @@ export default async function HotelPage({ params }: Props) {
               </span>
             )}
             <span className="flex items-center gap-1.5">
-              <MapPin size={15} className="text-red-500" />
+              <MapPin size={15} className="shrink-0 text-red-500" />
               {hotel.location}
             </span>
           </div>
@@ -129,8 +115,8 @@ export default async function HotelPage({ params }: Props) {
               </div>
             </>
           ) : (
-            <div className="mt-6 flex aspect-[16/9] items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-neutral-800 to-neutral-950 text-gray-500 sm:aspect-[21/9]">
-              {labels.photoSoon}
+            <div className="mt-6 flex aspect-[16/9] items-center justify-center rounded-2xl border border-white/10 bg-gradient-to-br from-neutral-800 to-neutral-950 px-4 text-center text-gray-500 sm:aspect-[21/9]">
+              <Tr sq="Fotot vijnë së shpejti" en="Photos coming soon" />
             </div>
           )}
         </div>
@@ -138,20 +124,24 @@ export default async function HotelPage({ params }: Props) {
 
       <section className="px-5 pb-24">
         <div className="mx-auto grid max-w-6xl gap-8 lg:grid-cols-[1fr_22rem]">
-          <div className="space-y-10">
+          <div className="min-w-0 space-y-10">
             <div>
-              <h2 className="text-xl font-bold uppercase tracking-wide">{labels.about}</h2>
-              <p className="mt-3 leading-8 text-gray-300">{hotel.description}</p>
+              <h2 className="text-xl font-bold uppercase tracking-wide">
+                <Tr sq="Rreth hotelit" en="About the hotel" />
+              </h2>
+              <p className="mt-3 break-words leading-8 text-gray-300">{hotel.description}</p>
             </div>
 
             {hotel.facilities.length > 0 && (
               <div>
-                <h2 className="text-xl font-bold uppercase tracking-wide">{labels.facilities}</h2>
+                <h2 className="text-xl font-bold uppercase tracking-wide">
+                  <Tr sq="Çfarë ofron" en="What it offers" />
+                </h2>
                 <ul className="mt-4 grid gap-2 sm:grid-cols-2">
                   {hotel.facilities.map((item) => (
                     <li key={item} className="flex gap-2 text-gray-300">
                       <Check size={16} className="mt-1 shrink-0 text-red-500" />
-                      {item}
+                      <span className="min-w-0 break-words">{item}</span>
                     </li>
                   ))}
                 </ul>
@@ -160,10 +150,15 @@ export default async function HotelPage({ params }: Props) {
 
             {boards.length > 0 && (
               <div>
-                <h2 className="text-xl font-bold uppercase tracking-wide">{labels.services}</h2>
+                <h2 className="text-xl font-bold uppercase tracking-wide">
+                  <Tr sq="Shërbimet e mundshme" en="Available services" />
+                </h2>
                 <div className="mt-4 flex flex-wrap gap-2">
                   {boards.map((b) => (
-                    <span key={b} className="rounded-full bg-neutral-900 px-4 py-2 text-sm font-bold text-gray-200">
+                    <span
+                      key={b}
+                      className="rounded-full bg-neutral-900 px-4 py-2 text-sm font-bold text-gray-200"
+                    >
                       {boardLabels[b]}
                     </span>
                   ))}
@@ -177,33 +172,37 @@ export default async function HotelPage({ params }: Props) {
               <p className="text-sm text-gray-400">
                 {from !== null ? (
                   <>
-                    {labels.from}{" "}
+                    <Tr sq="nga" en="from" />{" "}
                     <span className="text-3xl font-extrabold text-red-500">{from}€</span>{" "}
-                    {labels.perNight}
+                    <Tr sq="për person / natë" en="per person / night" />
                   </>
                 ) : (
-                  labels.askPrice
+                  <Tr sq="Çmimi: pyet për ofertë" en="Price: ask for an offer" />
                 )}
               </p>
 
               <BookButton
                 slug={hotel.slug}
-                className="mt-5 w-full rounded-full bg-red-600 py-3.5 font-bold text-white transition hover:bg-red-700"
+                className="mt-5 min-h-[48px] w-full rounded-full bg-red-600 px-4 py-3.5 font-bold text-white transition hover:bg-red-700"
               >
-                {labels.book}
+                <Tr sq="Rezervo / kontrollo disponueshmërinë" en="Book / check availability" />
               </BookButton>
 
-              <a
-                href={`https://wa.me/38349833888?text=${encodeURIComponent(message)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-white/30 py-3.5 font-bold transition hover:bg-white hover:text-black"
+              <WhatsAppLink
+                sq={`Përshëndetje! Dua të pyes për ${hotel.name} (${hotel.destination}).`}
+                en={`Hello! I would like to ask about ${hotel.name} (${hotel.destination}).`}
+                className="mt-3 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-full border border-white/30 px-4 py-3.5 font-bold transition hover:bg-white hover:text-black"
               >
                 <MessageCircle size={18} />
-                {labels.whatsapp}
-              </a>
+                <Tr sq="Na shkruaj në WhatsApp" en="Message us on WhatsApp" />
+              </WhatsAppLink>
 
-              <p className="mt-4 text-xs text-gray-500">{labels.note}</p>
+              <p className="mt-4 text-xs text-gray-500">
+                <Tr
+                  sq="Çmimet dhe vendet e lira i konfirmojmë ne."
+                  en="We confirm prices and availability."
+                />
+              </p>
             </div>
           </aside>
         </div>

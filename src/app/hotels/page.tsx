@@ -4,19 +4,12 @@ import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
 import BookingModal from "@/components/booking/BookingModal";
 import HotelsBrowser, { type HotelCard } from "@/components/booking/HotelsBrowser";
+import Tr from "@/components/Tr";
 
 export const metadata: Metadata = {
   title: "Hotele | Kushtrimi NM Worldwide",
   description:
-    "Hotele në Shqipëri, Turqi dhe Egjipt. Zgjidh hotelin, datat dhe numrin e personave, dhe pyet për vende të lira.",
-};
-
-// All the words on this page. Change them here.
-const labels = {
-  eyebrow: "Hotele",
-  heading: "Zgjidh hotelin tënd",
-  intro:
-    "Shfleto hotelet sipas vendit, zgjidh datat dhe numrin e personave, dhe pyet për vende të lira. Çmimet dhe disponueshmërinë i konfirmojmë ne.",
+    "Hotele në Shqipëri, Turqi dhe Egjipt. Zgjidh hotelin, datat dhe numrin e personave, dhe pyet për vende të lira. Hotels in Albania, Turkey and Egypt.",
 };
 
 export default function HotelsPage() {
@@ -39,12 +32,18 @@ export default function HotelsPage() {
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_80%_100%_at_50%_0%,rgba(220,38,38,0.25),transparent_70%)]" />
 
         <div className="relative mx-auto max-w-3xl">
-          <p className="text-sm font-bold uppercase text-red-500">{labels.eyebrow}</p>
-          <h1 className="mt-3 text-2xl font-bold uppercase tracking-wide sm:text-4xl">
-            {labels.heading}
+          <p className="text-sm font-bold uppercase text-red-500">
+            <Tr sq="Hotele" en="Hotels" />
+          </p>
+          <h1 className="mt-3 text-balance text-2xl font-bold uppercase tracking-wide sm:text-4xl">
+            <Tr sq="Zgjidh hotelin tënd" en="Choose your hotel" />
           </h1>
-          <p className="mx-auto mt-5 max-w-xl text-gray-300">{labels.intro}</p>
-
+          <p className="mx-auto mt-5 max-w-xl text-balance text-gray-300">
+            <Tr
+              sq="Shfleto hotelet sipas vendit, zgjidh datat dhe numrin e personave, dhe pyet për vende të lira. Çmimet dhe disponueshmërinë i konfirmojmë ne."
+              en="Browse hotels by country, choose your dates and number of guests, and ask about availability. We confirm prices and availability."
+            />
+          </p>
         </div>
       </section>
 
