@@ -8,6 +8,7 @@ import { Menu, X, Phone, Search } from "lucide-react";
 import SocialIcons from "@/components/SocialIcons";
 import LangSwitch from "@/components/LangSwitch";
 import SearchDialog from "@/components/SearchDialog";
+import { montserrat } from "@/lib/fonts";
 import { useLang } from "@/components/LanguageProvider";
 
 // All the words in the menu, in both languages. Change them here.
@@ -123,7 +124,7 @@ export default function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className={`group relative text-sm font-semibold tracking-[0.15em] transition ${
+                  className={`${montserrat.className} group relative text-sm font-bold tracking-[0.12em] transition ${
                     active ? "text-red-500" : "text-white hover:text-red-500"
                   }`}
                 >
@@ -154,7 +155,7 @@ export default function Navbar() {
 
             <LangSwitch />
 
-            <SocialIcons />
+            
 
             <Link
               href="/book"

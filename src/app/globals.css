@@ -283,3 +283,29 @@ body:has(dialog[open]) {
 @media (prefers-reduced-motion: reduce) {
   .board-row { animation: none; }
 }
+
+/* Early booking: waves and palm */
+@keyframes wave-slide {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.wave-slide { animation: wave-slide 14s linear infinite; }
+
+@keyframes palm-sway {
+  0%, 100% { transform: rotate(-1.5deg); }
+  50% { transform: rotate(1.5deg); }
+}
+.palm-sway { transform-origin: bottom center; animation: palm-sway 6s ease-in-out infinite; }
+
+/* Christmas: falling snow */
+@keyframes snow-fall {
+  0% { transform: translate3d(0, -5vh, 0); }
+  50% { transform: translate3d(14px, 50vh, 0); }
+  100% { transform: translate3d(-6px, 105vh, 0); }
+}
+.snowflake { animation: snow-fall linear infinite; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wave-slide, .palm-sway { animation: none; }
+  .snowflake { display: none; }
+}

@@ -7,17 +7,30 @@ import { motion, useReducedMotion } from "framer-motion";
 import { busTours } from "@/data/bus-tours";
 import { offers, perPerson } from "@/data/offers";
 import { useLang, type Lang } from "@/components/LanguageProvider";
+import Snow from "@/components/home/Snow";
+import { montserrat } from "@/lib/fonts";
+
 
 const heroImage = "/images/hero/home.jpg";
 
 // How many rows the board shows at once.
 const ROWS = 5;
 
+// The rows change every this many seconds. Change the number to make it faster or slower.
+const ROTATE_SECONDS = 4;
+
+// The first time the site opens in a visit, only the headline shows, in the middle of the screen.
+// After this many seconds it moves up and the departures board appears.
+const INTRO_SECONDS = 2;
+const SEEN_KEY = "kushtrimi-hero-intro";
+
 // All the words here, in both languages. Change them here.
+// Line 2 is written in two parts: the globe picture takes the place of the letter "o" between them.
 const labels = {
   sq: {
     line1: "Nga Kosova,",
-    line2: "drejt botës.",
+    line2a: "drejt b",
+    line2b: "tës.",
     board: "Nisjet e radhës",
     seeAll: "Shiko të gjitha ofertat",
     bus: "Me autobus",
@@ -26,7 +39,8 @@ const labels = {
   },
   en: {
     line1: "From Kosova,",
-    line2: "to the world.",
+    line2a: "to the w",
+    line2b: "rld.",
     board: "Next departures",
     seeAll: "See all offers",
     bus: "By bus",
@@ -101,6 +115,21 @@ function buildRows(lang: Lang, today: string): Row[] {
   return rows.sort((a, b) => a.date.localeCompare(b.date) || a.price - b.price);
 }
 
+// The red globe picture takes the place of the letter "o". It is the file public/images/globe.png.
+function Globe() {
+  return (
+    // eslint-disable-next-line @next/next/no-img-element
+    <img
+      src="/images/globe.png"
+      alt=""
+      aria-hidden="true"
+      width={90}
+      height={90}
+      className="relative top-[0.01em] mx-[0.015em] inline-block h-[0.76em] w-[0.76em] align-baseline"
+    />
+  );
+}
+
 export default function Hero() {
   const { lang } = useLang();
   const t = labels[lang];
@@ -108,18 +137,56 @@ export default function Hero() {
   const today = useSyncExternalStore(subscribe, getToday, () => "");
   const [page, setPage] = useState(0);
   const [paused, setPaused] = useState(false);
+  const [showBoard, setShowBoard] = useState(false);
 
   const rows = today ? buildRows(lang, today) : [];
   const pages = Math.max(1, Math.ceil(rows.length / ROWS));
   const current = page % pages;
   const shown = rows.slice(current * ROWS, current * ROWS + ROWS);
 
-  // Show the next rows every 6 seconds (not while the visitor hovers, or with reduced motion).
+  // The opening: headline alone in the middle, then the board appears and the headline moves up.
   useEffect(() => {
-    if (pages < 2 || paused || reduce) return;
-    const id = setInterval(() => setPage((p) => p + 1), 6000);
+    let seen = false;
+    try {
+      seen = window.sessionStorage.getItem(SEEN_KEY) === "1";
+    } catch {
+      // Storage can be blocked: we simply play the opening every time.
+    }
+
+    function reveal() {
+      setShowBoard(true);
+      try {
+        window.sessionStorage.setItem(SEEN_KEY, "1");
+      } catch {
+        // ignore
+      }
+    }
+
+    if (seen || reduce) {
+      setShowBoard(true);
+      return;
+    }
+
+    const timer = setTimeout(reveal, INTRO_SECONDS * 1000);
+    const skip = () => {
+      clearTimeout(timer);
+      reveal();
+    };
+    window.addEventListener("scroll", skip, { once: true, passive: true });
+    return () => {
+      clearTimeout(timer);
+      window.removeEventListener("scroll", skip);
+    };
+  }, [reduce]);
+
+  // Show the next rows every few seconds (not while the visitor hovers over the board).
+  useEffect(() => {
+    if (pages < 2 || paused || !showBoard) return;
+    const id = setInterval(() => setPage((p) => p + 1), ROTATE_SECONDS * 1000);
     return () => clearInterval(id);
-  }, [pages, paused, reduce]);
+  }, [pages, paused, showBoard]);
+
+  const fullText = `${t.line1} ${t.line2a}o${t.line2b}`;
 
   return (
     <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-black sm:min-h-screen">
@@ -127,30 +194,44 @@ export default function Hero() {
         src={heroImage}
         alt={t.alt}
         fetchPriority="high"
-        className="absolute inset-0 h-full w-full object-cover object-[80%_47%] opacity-50 sm:object-[center_47%] sm:opacity-100"
+        className="absolute inset-0 h-full w-full object-cover object-[80%_47%] opacity-75 sm:object-[center_47%] sm:opacity-100"
         initial={{ scale: 1 }}
         animate={{ scale: reduce ? 1 : 1.1 }}
         transition={{ duration: 24, ease: "linear" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/35 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black" />
+      <Snow />
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-14 pt-28 text-center text-white sm:px-6">
-        <h1 className="whitespace-nowrap text-[clamp(1.9rem,8vw,4.25rem)] font-extrabold uppercase leading-[1.1] tracking-wide">
-          {t.line1}
-          <br />
-          <span className="text-red-500">{t.line2}</span>
-        </h1>
+        <motion.h1
+          layout
+          transition={{ type: "spring", stiffness: 70, damping: 18 }}
+          className={`${montserrat.className} text-[clamp(1.9rem,8.4vw,5rem)] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] text-white`}
+        >
+          <span className="sr-only">{fullText}</span>
+          <span aria-hidden="true" className="block whitespace-nowrap">
+            {t.line1}
+          </span>
+          <span aria-hidden="true" className="block whitespace-nowrap text-red-600">
+            {t.line2a}
+            <Globe />
+            {t.line2b}
+          </span>
+        </motion.h1>
 
         {/* Departures board: real upcoming trips from the offers data */}
-        {rows.length > 0 && (
-          <div
+        {showBoard && rows.length > 0 && (
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, ease: "easeOut", delay: 0.15 }}
             className="mt-8 w-full max-w-xl overflow-hidden rounded-2xl border border-white/15 bg-black/60 text-left backdrop-blur-md"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onFocus={() => setPaused(true)}
             onBlur={() => setPaused(false)}
           >
-            <div className="flex items-center justify-between gap-3 px-4 py-3">
+            <div className="flex items-center justify-between gap-3 border-b border-red-600/50 bg-black px-4 py-3">
               <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/80 sm:text-sm">
                 <span aria-hidden="true" className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-60 motion-reduce:animate-none" />
@@ -199,7 +280,7 @@ export default function Hero() {
               {t.seeAll}
               <ArrowRight size={16} aria-hidden="true" />
             </Link>
-          </div>
+          </motion.div>
         )}
       </div>
     </section>

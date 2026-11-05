@@ -1,5 +1,6 @@
 import Hero from "@/components/home/Hero";
 import GuidedTours from "@/components/tours/GuidedTours";
+import ChristmasTrips from "@/components/home/ChristmasTrips";
 import Testimonials from "@/components/home/Testimonials";
 import FeaturedDestinations from "@/components/home/FeaturedDestinations";
 import EarlyBooking from "@/components/home/EarlyBooking";
@@ -15,6 +16,7 @@ export default function Home() {
         <GuidedTours />
       </div>
 
+      <ChristmasTrips />
       <Testimonials />
       <FeaturedDestinations />
       <EarlyBooking />
