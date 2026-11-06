@@ -198,7 +198,7 @@ export default function Hero() {
         animate={{ scale: reduce ? 1 : 1.1 }}
         transition={{ duration: 24, ease: "linear" }}
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-black/10 to-black" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black" />
       <Snow />
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-14 pt-28 text-center text-white sm:px-6">
@@ -211,7 +211,7 @@ export default function Hero() {
           <span aria-hidden="true" className="block whitespace-nowrap">
             {t.line1}
           </span>
-          <span aria-hidden="true" className="block whitespace-nowrap text-red-600">
+          <span aria-hidden="true" className="block whitespace-nowrap text-white">
             {t.line2a}
             <Globe />
             {t.line2b}
