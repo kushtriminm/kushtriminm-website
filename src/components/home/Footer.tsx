@@ -5,6 +5,8 @@ import Link from "next/link";
 import { Phone, Mail, MapPin } from "lucide-react";
 import { FaFacebookF, FaInstagram, FaTiktok } from "react-icons/fa";
 import { useLang } from "@/components/LanguageProvider";
+import { useChristmas } from "@/components/christmas/ChristmasProvider";
+import SnowPile from "@/components/christmas/SnowPile";
 
 // All the words in the footer, in both languages. Change them here.
 const labels = {
@@ -73,15 +75,21 @@ const glow = "font-semibold text-orange-500 [text-shadow:0_0_10px_rgba(249,115,2
 export default function Footer() {
   const { lang } = useLang();
   const t = labels[lang];
+  const christmas = useChristmas();
 
   return (
-    <footer className="border-t border-white/10 bg-black text-white">
-      <div className="mx-auto max-w-7xl px-5 pb-24 pt-10 sm:px-6 sm:pb-14 sm:pt-14">
+    <footer className="relative overflow-hidden border-t border-white/10 bg-black text-white">
+      {/* At Christmas there is extra room at the bottom for the snow pile */}
+      <div
+        className={`relative z-[1] mx-auto max-w-7xl px-5 pt-10 sm:px-6 sm:pt-14 ${
+          christmas ? "pb-32 sm:pb-28" : "pb-24 sm:pb-14"
+        }`}
+      >
         <div className="grid grid-cols-1 gap-y-9 md:grid-cols-[1.4fr_1fr_1.4fr] md:gap-x-10">
           {/* Brand */}
           <div>
             <Image
-              src="/images/Logo.png"
+              src={christmas ? "/images/Logo-christmas.png" : "/images/Logo.png"}
               alt="Kushtrimi NM Worldwide"
               width={220}
               height={80}
@@ -198,6 +206,8 @@ export default function Footer() {
           </p>
         </div>
       </div>
+
+      <SnowPile />
     </footer>
   );
 }

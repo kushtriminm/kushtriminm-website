@@ -303,9 +303,20 @@ body:has(dialog[open]) {
   50% { transform: translate3d(14px, 50vh, 0); }
   100% { transform: translate3d(-6px, 105vh, 0); }
 }
-.snowflake { animation: snow-fall linear infinite; }
+.snowflake { animation: snow-fall linear infinite; will-change: transform; }
+
+/* Christmas: glints in the snow pile */
+@keyframes snow-glint {
+  0%, 70%, 100% { opacity: 0; transform: scale(0.5); }
+  80% { opacity: 1; transform: scale(1.4); }
+}
+.snow-glint {
+  box-shadow: 0 0 6px 2px rgba(255, 255, 255, 0.8);
+  animation: snow-glint 5s ease-in-out infinite;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .wave-slide, .palm-sway { animation: none; }
   .snowflake { display: none; }
+  .snow-glint { animation: none; }
 }

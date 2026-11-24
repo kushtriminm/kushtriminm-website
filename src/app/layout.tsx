@@ -9,6 +9,9 @@ import FaqAssistant from "@/components/FaqAssistant";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import LivePricing from "@/components/LivePricing";
 import { getHotelContent, pricingFrom } from "@/lib/live";
+import { ChristmasProvider } from "@/components/christmas/ChristmasProvider";
+import Snow from "@/components/christmas/Snow";
+import { isChristmasSeason, kosovoToday } from "@/lib/season";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushtriminm.com"),
@@ -54,6 +57,8 @@ export default async function RootLayout({
 }>) {
   // Hotel prices entered in the agent panel, for the booking calculator in the browser.
   const livePricing = pricingFrom(await getHotelContent());
+  // Christmas look (logo, lights, snow) between the dates in src/lib/season.ts.
+  const christmas = isChristmasSeason(kosovoToday());
 
   return (
     <html lang="en">
@@ -83,6 +88,7 @@ export default async function RootLayout({
           />
         </noscript>
 
+        <ChristmasProvider on={christmas}>
         <LanguageProvider>
           <LivePricing pricing={livePricing}>
             <Navbar />
@@ -93,8 +99,12 @@ export default async function RootLayout({
 
             <WhatsAppButton />
             <FaqAssistant />
+
+            {/* A few snowflakes over every page (the hero has its own, thicker snow) */}
+            <Snow variant="page" />
           </LivePricing>
         </LanguageProvider>
+        </ChristmasProvider>
       </body>
     </html>
   );

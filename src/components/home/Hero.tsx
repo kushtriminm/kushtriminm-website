@@ -2,74 +2,47 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Bus, ChevronDown, Plane } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { busTours } from "@/data/bus-tours";
+import { heroImages } from "@/data/hero-images";
 import { offers, perPerson } from "@/data/offers";
 import { useLang, type Lang } from "@/components/LanguageProvider";
-import Snow from "@/components/home/Snow";
+import Snow from "@/components/christmas/Snow";
 import { montserrat } from "@/lib/fonts";
 
-// The hero photos, in public/images/hero/. Add or remove a line to change them.
-// They play in a random order, and a new visit never starts with the same photo as the last one.
-// focus = which part of the photo stays in view when the screen crops it.
-// drift = which way the photo slowly moves while it is on screen.
-const heroImages = [
-  {
-    src: "/images/hero/egypt.jpg",
-    sq: "Tempull i lashtë në Egjipt",
-    en: "Ancient temple in Egypt",
-    focus: "50% 45%",
-    drift: { x: "-0.5%", y: "0.3%" },
-  },
-  {
-    src: "/images/hero/maldives.jpg",
-    sq: "Urë druri drejt vilave mbi ujë në Maldive",
-    en: "Wooden jetty to overwater villas in the Maldives",
-    focus: "50% 68%",
-    drift: { x: "0%", y: "-0.6%" },
-  },
-  {
-    src: "/images/hero/dubai.jpg",
-    sq: "Deve në shkretëtirë me qytetin e Dubait pas",
-    en: "Camels in the desert with the Dubai skyline behind",
-    focus: "55% 55%",
-    drift: { x: "0.6%", y: "0%" },
-  },
-  {
-    src: "/images/hero/thailand.jpg",
-    sq: "Pishinë mes palmave në Tajlandë",
-    en: "Pool among palm trees in Thailand",
-    focus: "50% 50%",
-    drift: { x: "-0.6%", y: "-0.2%" },
-  },
-];
-
-// The photo changes every this many seconds.
+// The photo changes every this many seconds, and the change takes FADE_SECONDS.
 const IMAGE_SECONDS = 15;
-const LAST_IMAGE_KEY = "kushtrimi-hero-last-image";
-
-// A random order of the photos that does not start with the one shown first last time.
-function shuffledImages(): number[] {
-  const order = heroImages.map((_, i) => i);
+const FADE_SECONDS = 2.5;
+function shuffle(list: number[]) {
+  const order = [...list];
   for (let i = order.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
     [order[i], order[j]] = [order[j], order[i]];
   }
-  try {
-    const last = Number(window.localStorage.getItem(LAST_IMAGE_KEY));
-    if (order.length > 1 && order[0] === last) order.push(order.shift()!);
-    window.localStorage.setItem(LAST_IMAGE_KEY, String(order[0]));
-  } catch {
-    // Storage can be blocked: the order is still random.
-  }
   return order;
 }
 
-let imageOrderCache: number[] | null = null;
-function getImageOrder() {
-  if (!imageOrderCache) imageOrderCache = shuffledImages();
-  return imageOrderCache;
+// The photos after the first one: a long random sequence where every round shows each photo
+// once in a new order, and the same photo never comes twice in a row.
+function shuffledImages(first: number): number[] {
+  const all = heroImages.map((_, i) => i);
+  let last = first;
+  const sequence: number[] = [];
+  for (let round = 0; round < 40; round++) {
+    const order = shuffle(all);
+    if (order.length > 1 && order[0] === last) order.push(order.shift()!);
+    sequence.push(...order);
+    last = order[order.length - 1];
+  }
+  return sequence;
+}
+
+const orderCache = new Map<number, number[]>();
+function getImageOrder(first: number) {
+  if (!orderCache.has(first)) orderCache.set(first, shuffledImages(first));
+  return orderCache.get(first)!;
 }
 
 // How many rows the board shows at once.
@@ -191,7 +164,7 @@ function TitleLine({ text, startIndex, reduce }: { text: string; startIndex: num
   );
 }
 
-export default function Hero() {
+export default function Hero({ firstImage = 0 }: { firstImage?: number }) {
   const { lang } = useLang();
   const t = labels[lang];
   const reduce = useReducedMotion();
@@ -202,25 +175,34 @@ export default function Hero() {
   // The departures board starts closed; tapping its bar opens the list.
   const [boardOpen, setBoardOpen] = useState(false);
   // The random photo order is picked once the page is open in the browser.
-  const imageOrder = useSyncExternalStore(subscribe, getImageOrder, () => null);
+  const first = heroImages[firstImage] ? firstImage : 0;
+  const imageOrder = useSyncExternalStore(
+    subscribe,
+    () => getImageOrder(first),
+    () => null
+  );
   const [imageStep, setImageStep] = useState(0);
+  // The highest step whose photo has finished loading.
+  const [loadedStep, setLoadedStep] = useState(-1);
+  const nextReady = loadedStep > imageStep;
 
-  // Next photo every IMAGE_SECONDS.
+  // Move to the next photo IMAGE_SECONDS after it has loaded in the background,
+  // so a slow connection never shows a half-loaded or empty photo.
   useEffect(() => {
-    if (!imageOrder || imageOrder.length < 2) return;
-    const id = setInterval(() => setImageStep((s) => s + 1), IMAGE_SECONDS * 1000);
-    return () => clearInterval(id);
-  }, [imageOrder]);
+    if (!imageOrder || imageOrder.length < 2 || !nextReady) return;
+    const id = setTimeout(() => setImageStep((s) => s + 1), IMAGE_SECONDS * 1000);
+    return () => clearTimeout(id);
+  }, [imageOrder, imageStep, nextReady]);
 
-  // Load the next photo in advance so the change is smooth.
-  useEffect(() => {
-    if (!imageOrder) return;
-    const next = heroImages[imageOrder[(imageStep + 1) % imageOrder.length]];
-    const img = new Image();
-    img.src = next.src;
-  }, [imageOrder, imageStep]);
-
-  const activeImage = imageOrder ? heroImages[imageOrder[imageStep % imageOrder.length]] : null;
+  // On screen at once: the previous photo (underneath), the current one fading in over it,
+  // and the next one loading invisibly on top (only after the current one has loaded).
+  // Step 0 is the photo picked on the server, so it is already in the page when it opens.
+  const layers: number[] = [];
+  if (imageStep > 0) layers.push(imageStep - 1);
+  layers.push(imageStep);
+  if (imageOrder && loadedStep >= imageStep) layers.push(imageStep + 1);
+  const imageAt = (step: number) =>
+    heroImages[step === 0 || !imageOrder ? first : imageOrder[(step - 1) % imageOrder.length]];
 
   const rows = today ? buildRows(lang, today) : [];
   const pages = Math.max(1, Math.ceil(rows.length / ROWS));
@@ -273,30 +255,42 @@ export default function Hero() {
 
   return (
     <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-black sm:min-h-screen">
-      <AnimatePresence initial={false}>
-        {activeImage && (
-          // Each photo fades in and stays almost still: only a very slight zoom and drift.
+      {layers.map((step) => {
+        const image = imageAt(step);
+        // The first photo shows at once; later ones wait until they have loaded.
+        const visible = step <= imageStep && (step === 0 || loadedStep >= step);
+        const moving = !reduce && step <= imageStep;
+        return (
+          // Each new photo fades in over the previous one, which stays fully visible
+          // underneath until it is covered, so the change never dips to black.
           <motion.div
-            key={`${imageStep}-${activeImage.src}`}
+            key={step}
             className="absolute inset-0 overflow-hidden"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0, transition: { duration: 2.2, ease: [0.4, 0, 0.2, 1] } }}
-            transition={{ duration: 2.2, ease: [0.4, 0, 0.2, 1] }}
+            initial={step === 0 ? false : { opacity: 0 }}
+            animate={{ opacity: visible ? 1 : 0 }}
+            transition={{ duration: reduce ? 0.4 : FADE_SECONDS, ease: [0.4, 0, 0.2, 1] }}
           >
-            <motion.img
-              src={activeImage.src}
-              alt={activeImage[lang]}
-              fetchPriority="high"
-              style={{ objectPosition: activeImage.focus }}
-              className="h-full w-full object-cover opacity-75 will-change-transform sm:opacity-100"
-              initial={reduce ? false : { scale: 1.05, x: "0%", y: "0%" }}
-              animate={reduce ? undefined : { scale: 1.02, ...activeImage.drift }}
-              transition={{ duration: IMAGE_SECONDS + 2.5, ease: "linear" }}
-            />
+            <motion.div
+              className="absolute inset-0 will-change-transform"
+              initial={{ scale: 1.06, x: "0%", y: "0%" }}
+              animate={moving ? { scale: 1.01, ...image.drift } : undefined}
+              transition={{ duration: IMAGE_SECONDS + FADE_SECONDS + 3, ease: "linear" }}
+            >
+              <Image
+                src={image.src}
+                alt={step === imageStep ? image[lang] : ""}
+                fill
+                sizes="100vw"
+                loading="eager"
+                fetchPriority={step === 0 ? "high" : "low"}
+                onLoad={() => setLoadedStep((s) => Math.max(s, step))}
+                style={{ objectPosition: image.focus }}
+                className="object-cover opacity-75 sm:opacity-[0.78]"
+              />
+            </motion.div>
           </motion.div>
-        )}
-      </AnimatePresence>
+        );
+      })}
       {/* Dark fade over the photo. It reaches full black a little before the bottom and
           overhangs the edge by a few pixels, so no thin line of photo shows on phones. */}
       <div className="absolute inset-x-0 -bottom-1 top-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.25)_45%,#000_94%)]" />

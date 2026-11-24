@@ -16,3 +16,9 @@ export function holidayRange(today: string) {
   const startYear = month === 1 ? year - 1 : year;
   return { from: `${startYear}-12-20`, to: `${startYear + 1}-01-03` };
 }
+// Today's date in Kosovo as "YYYY-MM-DD". Used on the server, so the Christmas look
+// is decided before the page is sent and turns itself off after CHRISTMAS_TO
+// (the pages refresh every minute, no new deploy needed).
+export function kosovoToday() {
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Belgrade" }).format(new Date());
+}

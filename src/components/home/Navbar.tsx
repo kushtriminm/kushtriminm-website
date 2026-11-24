@@ -10,6 +10,7 @@ import LangSwitch from "@/components/LangSwitch";
 import SearchDialog from "@/components/SearchDialog";
 import { montserrat } from "@/lib/fonts";
 import { useLang } from "@/components/LanguageProvider";
+import { useChristmas } from "@/components/christmas/ChristmasProvider";
 
 // All the words in the menu, in both languages. Change them here.
 const labels = {
@@ -49,6 +50,7 @@ export default function Navbar() {
   const pathname = usePathname();
   const { lang } = useLang();
   const t = labels[lang];
+  const christmas = useChristmas();
 
   const links = [
     { name: t.home, href: "/" },
@@ -108,11 +110,11 @@ export default function Navbar() {
 
           <Link href="/" className="shrink-0" onClick={closeMenu}>
             <Image
-              src="/images/Logo.png"
+              src={christmas ? "/images/Logo-christmas.png" : "/images/Logo.png"}
               alt="Kushtrimi NM Worldwide"
               width={160}
               height={56}
-              priority
+              preload
               className="h-auto w-[120px] sm:w-[160px]"
             />
           </Link>
