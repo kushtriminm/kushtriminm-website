@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { allHotels } from "@/data/all-hotels";
 import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
+import { loadLiveHotels } from "@/lib/live";
 import BookingModal from "@/components/booking/BookingModal";
 import HotelsBrowser, { type HotelCard } from "@/components/booking/HotelsBrowser";
 import Tr from "@/components/Tr";
@@ -12,7 +13,8 @@ export const metadata: Metadata = {
     "Hotele në Shqipëri, Turqi dhe Egjipt. Zgjidh hotelin, datat dhe numrin e personave, dhe pyet për vende të lira. Hotels in Albania, Turkey and Egypt.",
 };
 
-export default function HotelsPage() {
+export default async function HotelsPage() {
+  await loadLiveHotels();
   const cards: HotelCard[] = allHotels.map((hotel) => ({
     slug: hotel.slug,
     name: hotel.name,

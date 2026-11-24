@@ -7,6 +7,8 @@ import Footer from "@/components/home/Footer";
 import WhatsAppButton from "@/components/home/WhatsAppButton";
 import FaqAssistant from "@/components/FaqAssistant";
 import { LanguageProvider } from "@/components/LanguageProvider";
+import LivePricing from "@/components/LivePricing";
+import { getHotelContent, pricingFrom } from "@/lib/live";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://kushtriminm.com"),
@@ -45,11 +47,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // Hotel prices entered in the agent panel, for the booking calculator in the browser.
+  const livePricing = pricingFrom(await getHotelContent());
+
   return (
     <html lang="en">
       <body className="overflow-x-clip bg-black text-white antialiased">
@@ -79,14 +84,16 @@ export default function RootLayout({
         </noscript>
 
         <LanguageProvider>
-          <Navbar />
+          <LivePricing pricing={livePricing}>
+            <Navbar />
 
-          <div>{children}</div>
+            <div>{children}</div>
 
-          <Footer />
+            <Footer />
 
-          <WhatsAppButton />
-          <FaqAssistant />
+            <WhatsAppButton />
+            <FaqAssistant />
+          </LivePricing>
         </LanguageProvider>
       </body>
     </html>

@@ -4,13 +4,22 @@ import { allBoards, hotelPricing, type Board } from "@/data/hotel-pricing";
 
 // Server-only helpers (they read files at build time).
 
-// Photos: everything in public/images/hotels/<slug>/ (sorted, 1.jpg is the cover).
-// If that folder is empty or missing, the hotel's old image/gallery is used.
+// Photos added in the agent panel, filled by loadLiveHotels() in lib/live.ts.
+export const livePhotos: Record<string, string[]> = {};
+
+// Photos: 1) the ones added in the agent panel, 2) everything in public/images/hotels/<slug>/
+// (sorted, 1.jpg is the cover), 3) the hotel's old image/gallery.
 export function hotelPhotos(
   slug: string,
   image: string,
   gallery: string[]
 ): string[] {
+  if (livePhotos[slug]?.length) return livePhotos[slug];
+  return filePhotos(slug, image, gallery);
+}
+
+// The photos that come with the website itself (not the ones from the agent panel).
+export function filePhotos(slug: string, image: string, gallery: string[]): string[] {
   const dir = path.join(process.cwd(), "public", "images", "hotels", slug);
 
   try {

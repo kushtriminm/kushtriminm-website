@@ -5,6 +5,7 @@ import { allHotels } from "@/data/all-hotels";
 import type { DestinationPage } from "@/data/destination-pages";
 import { fromPrice } from "@/lib/booking";
 import { hotelPhotos } from "@/lib/hotel-info";
+import { loadLiveHotels } from "@/lib/live";
 import BookButton from "@/components/booking/BookButton";
 import BookingModal from "@/components/booking/BookingModal";
 import ScrollRow from "@/components/booking/ScrollRow";
@@ -22,7 +23,9 @@ const sectionAlt =
   "bg-gradient-to-b from-black via-neutral-950 to-black px-5 py-14 sm:py-20";
 const h2 = "text-balance text-2xl font-extrabold uppercase tracking-wide sm:text-4xl";
 
-export default function DestinationPageView({ data }: { data: DestinationPage }) {
+export default async function DestinationPageView({ data }: { data: DestinationPage }) {
+  // Photos, texts and prices added in the agent panel (if any).
+  const live = await loadLiveHotels();
   const hotels = allHotels.filter((hotel) => hotel.country === data.country);
   const hasHotels = hotels.length > 0;
   const areas = data.areas ?? [];
@@ -166,7 +169,12 @@ export default function DestinationPageView({ data }: { data: DestinationPage })
                           ))}
                         </div>
                       )}
-                      <p className="mt-3 line-clamp-2 text-sm text-gray-400">{hotel.description}</p>
+                      <p className="mt-3 line-clamp-2 text-sm text-gray-400">
+                        <Tr
+                          sq={live[hotel.slug]?.description_sq || hotel.description}
+                          en={live[hotel.slug]?.description_en || hotel.description}
+                        />
+                      </p>
                       <p className="mt-3 text-sm text-gray-400">
                         {from !== null ? (
                           <>

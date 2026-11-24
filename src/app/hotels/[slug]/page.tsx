@@ -7,6 +7,7 @@ import { allHotels } from "@/data/all-hotels";
 import { boardLabels } from "@/data/hotel-pricing";
 import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
+import { loadLiveHotels } from "@/lib/live";
 import BookButton from "@/components/booking/BookButton";
 import BookingModal from "@/components/booking/BookingModal";
 import Tr from "@/components/Tr";
@@ -35,6 +36,11 @@ export default async function HotelPage({ params }: Props) {
   const { slug } = await params;
   const hotel = allHotels.find((item) => item.slug === slug);
   if (!hotel) notFound();
+
+  // Photos, texts and prices added in the agent panel (if any).
+  const live = (await loadLiveHotels())[hotel.slug];
+  const aboutSq = live?.description_sq || live?.description_en || hotel.description;
+  const aboutEn = live?.description_en || live?.description_sq || hotel.description;
 
   const photos = hotelPhotos(hotel.slug, hotel.image, hotel.gallery);
   const boards = declaredBoards(hotel.slug);
@@ -129,7 +135,9 @@ export default async function HotelPage({ params }: Props) {
               <h2 className="text-xl font-bold uppercase tracking-wide">
                 <Tr sq="Rreth hotelit" en="About the hotel" />
               </h2>
-              <p className="mt-3 break-words leading-8 text-gray-300">{hotel.description}</p>
+              <p className="mt-3 whitespace-pre-line break-words leading-8 text-gray-300">
+                <Tr sq={aboutSq} en={aboutEn} />
+              </p>
             </div>
 
             {hotel.facilities.length > 0 && (

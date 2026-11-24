@@ -11,6 +11,7 @@ const pages = [
   "/destinations/egypt",
   "/destinations/greece",
   "/hotels",
+  "/deals",
   "/book",
   "/about",
   "/contact",

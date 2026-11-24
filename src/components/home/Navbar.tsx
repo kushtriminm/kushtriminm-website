@@ -17,6 +17,7 @@ const labels = {
     home: "KRYEFAQJA",
     destinations: "DESTINACIONET",
     hotels: "OFERTAT",
+    deals: "TË MOMENTIT",
     about: "RRETH NESH",
     contact: "KONTAKT",
     book: "Rezervo",
@@ -31,6 +32,7 @@ const labels = {
     home: "HOME",
     destinations: "DESTINATIONS",
     hotels: "OFFERS",
+    deals: "HOT DEALS",
     about: "ABOUT",
     contact: "CONTACT",
     book: "Book",
@@ -52,6 +54,7 @@ export default function Navbar() {
     { name: t.home, href: "/" },
     { name: t.destinations, href: "/destinations" },
     { name: t.hotels, href: "/offers" },
+    { name: t.deals, href: "/deals" },
     { name: t.about, href: "/about" },
     { name: t.contact, href: "/contact" },
   ];
