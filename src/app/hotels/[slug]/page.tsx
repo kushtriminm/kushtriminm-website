@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Check, MapPin, MessageCircle, Star } from "lucide-react";
-import { allHotels } from "@/data/all-hotels";
+import { allHotels, fileHotels } from "@/data/all-hotels";
 import { boardLabels } from "@/data/hotel-pricing";
 import { fromPrice } from "@/lib/booking";
 import { declaredBoards, hotelPhotos } from "@/lib/hotel-info";
@@ -15,15 +15,15 @@ import WhatsAppLink from "@/components/WhatsAppLink";
 
 type Props = { params: Promise<{ slug: string }> };
 
-// Pages are built once, ahead of time (faster and better for Google).
-export const dynamicParams = false;
-
+// The website's own hotels are built ahead of time (faster and better for Google).
+// Hotels added in the agent panel get their page the first time someone opens it.
 export function generateStaticParams() {
-  return allHotels.map((hotel) => ({ slug: hotel.slug }));
+  return fileHotels.map((hotel) => ({ slug: hotel.slug }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
+  await loadLiveHotels();
   const hotel = allHotels.find((item) => item.slug === slug);
   if (!hotel) return {};
   return {
@@ -34,11 +34,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function HotelPage({ params }: Props) {
   const { slug } = await params;
+  // Photos, texts, prices and new hotels added in the agent panel (if any).
+  const content = await loadLiveHotels();
   const hotel = allHotels.find((item) => item.slug === slug);
   if (!hotel) notFound();
-
-  // Photos, texts and prices added in the agent panel (if any).
-  const live = (await loadLiveHotels())[hotel.slug];
+  const live = content[hotel.slug];
   const aboutSq = live?.description_sq || live?.description_en || hotel.description;
   const aboutEn = live?.description_en || live?.description_sq || hotel.description;
 

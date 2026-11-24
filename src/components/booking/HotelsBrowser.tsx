@@ -63,6 +63,7 @@ const countryNamesSq: Record<string, string> = {
   Albania: "Shqipëri",
   Turkey: "Turqi",
   Egypt: "Egjipt",
+  Greece: "Greqi",
 };
 
 function sectionId(region: string) {

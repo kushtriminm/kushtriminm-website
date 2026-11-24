@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { allHotels } from "@/data/all-hotels";
+import { fileHotels } from "@/data/all-hotels";
 import { filePhotos } from "@/lib/hotel-info";
 import AgentApp from "@/components/agent/AgentApp";
 import type { AgentHotel } from "@/components/agent/HotelsPanel";
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default function AgentPage() {
-  const hotels: AgentHotel[] = allHotels
+  const hotels: AgentHotel[] = fileHotels
     .map((h) => ({
       slug: h.slug,
       name: h.name,

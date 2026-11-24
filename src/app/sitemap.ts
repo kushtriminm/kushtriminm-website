@@ -1,5 +1,6 @@
 import type { MetadataRoute } from "next";
 import { allHotels } from "@/data/all-hotels";
+import { loadLiveHotels } from "@/lib/live";
 
 // CHECK: use the same domain as in your old sitemap.ts
 const baseUrl = "https://www.kushtriminm.com";
@@ -17,7 +18,8 @@ const pages = [
   "/contact",
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+  await loadLiveHotels(); // includes the hotels added in the agent panel
   const now = new Date();
 
   return [

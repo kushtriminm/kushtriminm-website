@@ -8,7 +8,8 @@ import WhatsAppButton from "@/components/home/WhatsAppButton";
 import FaqAssistant from "@/components/FaqAssistant";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import LivePricing from "@/components/LivePricing";
-import { getHotelContent, pricingFrom } from "@/lib/live";
+import { loadLiveHotels, pricingFrom } from "@/lib/live";
+import { customHotelsFrom } from "@/data/all-hotels";
 import { ChristmasProvider } from "@/components/christmas/ChristmasProvider";
 import Snow from "@/components/christmas/Snow";
 import { isChristmasSeason, kosovoToday } from "@/lib/season";
@@ -55,8 +56,10 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Hotel prices entered in the agent panel, for the booking calculator in the browser.
-  const livePricing = pricingFrom(await getHotelContent());
+  // Hotel prices and new hotels entered in the agent panel, for the booking form and search.
+  const hotelContent = await loadLiveHotels();
+  const livePricing = pricingFrom(hotelContent);
+  const customHotels = customHotelsFrom(hotelContent);
   // Christmas look (logo, lights, snow) between the dates in src/lib/season.ts.
   const christmas = isChristmasSeason(kosovoToday());
 
@@ -90,7 +93,7 @@ export default async function RootLayout({
 
         <ChristmasProvider on={christmas}>
         <LanguageProvider>
-          <LivePricing pricing={livePricing}>
+          <LivePricing pricing={livePricing} hotels={customHotels}>
             <Navbar />
 
             <div>{children}</div>

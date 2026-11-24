@@ -108,3 +108,16 @@ create policy "admin deletes site photos" on storage.objects
 insert into public.site_admins (user_id)
 select id from auth.users where email = 'PUT-YOUR-EMAIL-HERE'
 on conflict do nothing;
+
+-- ---------------------------------------------------------------------
+-- 6. New hotels added from the panel (any country on the website).
+--    They use the same hotel_content table, with these extra details.
+-- ---------------------------------------------------------------------
+alter table public.hotel_content add column if not exists is_custom   boolean not null default false;
+alter table public.hotel_content add column if not exists name        text;
+alter table public.hotel_content add column if not exists country     text;
+alter table public.hotel_content add column if not exists destination text;
+alter table public.hotel_content add column if not exists location    text;
+alter table public.hotel_content add column if not exists category    text;
+alter table public.hotel_content add column if not exists stars       int check (stars is null or stars between 1 and 5);
+alter table public.hotel_content add column if not exists facilities  text[] not null default '{}';

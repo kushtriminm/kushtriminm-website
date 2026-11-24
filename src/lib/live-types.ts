@@ -25,6 +25,15 @@ export type HotelContent = {
   photos: string[];
   pricing: HotelPricing | null;
   updated_at?: string;
+  // Only for hotels added in the panel (not in the website's files):
+  is_custom?: boolean;
+  name?: string | null;
+  country?: string | null;
+  destination?: string | null;
+  location?: string | null;
+  category?: string | null;
+  stars?: number | null;
+  facilities?: string[] | null;
 };
 
 // The Supabase project. Both values are public (safe in the browser);

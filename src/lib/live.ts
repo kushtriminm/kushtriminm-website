@@ -1,4 +1,5 @@
 import type { HotelPricing } from "@/data/hotel-pricing";
+import { applyCustomHotels, customHotelsFrom } from "@/data/all-hotels";
 import { livePhotos } from "./hotel-info";
 import { applyLivePricing } from "./live-pricing";
 import {
@@ -53,10 +54,12 @@ export function pricingFrom(content: Record<string, HotelContent>): Record<strin
   return out;
 }
 
-// Call at the top of a server page that shows hotels: after this, fromPrice(),
-// declaredBoards() and hotelPhotos() use the panel's prices and photos.
+// Call at the top of a server page that shows hotels: after this, allHotels includes the hotels
+// added in the panel, and fromPrice(), declaredBoards() and hotelPhotos() use the panel's
+// prices and photos.
 export async function loadLiveHotels(): Promise<Record<string, HotelContent>> {
   const content = await getHotelContent();
+  applyCustomHotels(customHotelsFrom(content));
   applyLivePricing(pricingFrom(content));
   for (const slug of Object.keys(livePhotos)) delete livePhotos[slug];
   for (const [slug, row] of Object.entries(content)) {
