@@ -2,15 +2,75 @@
 
 import { useEffect, useState, useSyncExternalStore } from "react";
 import Link from "next/link";
-import { ArrowRight, Bus, Plane } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import { ArrowRight, Bus, ChevronDown, Plane } from "lucide-react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { busTours } from "@/data/bus-tours";
 import { offers, perPerson } from "@/data/offers";
 import { useLang, type Lang } from "@/components/LanguageProvider";
 import Snow from "@/components/home/Snow";
 import { montserrat } from "@/lib/fonts";
 
-const heroImage = "/images/hero/home.jpg";
+// The hero photos, in public/images/hero/. Add or remove a line to change them.
+// They play in a random order, and a new visit never starts with the same photo as the last one.
+// focus = which part of the photo stays in view when the screen crops it.
+// drift = which way the photo slowly moves while it is on screen.
+const heroImages = [
+  {
+    src: "/images/hero/egypt.jpg",
+    sq: "Tempull i lashtë në Egjipt",
+    en: "Ancient temple in Egypt",
+    focus: "50% 45%",
+    drift: { x: "-0.5%", y: "0.3%" },
+  },
+  {
+    src: "/images/hero/maldives.jpg",
+    sq: "Urë druri drejt vilave mbi ujë në Maldive",
+    en: "Wooden jetty to overwater villas in the Maldives",
+    focus: "50% 68%",
+    drift: { x: "0%", y: "-0.6%" },
+  },
+  {
+    src: "/images/hero/dubai.jpg",
+    sq: "Deve në shkretëtirë me qytetin e Dubait pas",
+    en: "Camels in the desert with the Dubai skyline behind",
+    focus: "55% 55%",
+    drift: { x: "0.6%", y: "0%" },
+  },
+  {
+    src: "/images/hero/thailand.jpg",
+    sq: "Pishinë mes palmave në Tajlandë",
+    en: "Pool among palm trees in Thailand",
+    focus: "50% 50%",
+    drift: { x: "-0.6%", y: "-0.2%" },
+  },
+];
+
+// The photo changes every this many seconds.
+const IMAGE_SECONDS = 15;
+const LAST_IMAGE_KEY = "kushtrimi-hero-last-image";
+
+// A random order of the photos that does not start with the one shown first last time.
+function shuffledImages(): number[] {
+  const order = heroImages.map((_, i) => i);
+  for (let i = order.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [order[i], order[j]] = [order[j], order[i]];
+  }
+  try {
+    const last = Number(window.localStorage.getItem(LAST_IMAGE_KEY));
+    if (order.length > 1 && order[0] === last) order.push(order.shift()!);
+    window.localStorage.setItem(LAST_IMAGE_KEY, String(order[0]));
+  } catch {
+    // Storage can be blocked: the order is still random.
+  }
+  return order;
+}
+
+let imageOrderCache: number[] | null = null;
+function getImageOrder() {
+  if (!imageOrderCache) imageOrderCache = shuffledImages();
+  return imageOrderCache;
+}
 
 // How many rows the board shows at once.
 const ROWS = 5;
@@ -24,27 +84,22 @@ const INTRO_SECONDS = 2;
 const SEEN_KEY = "kushtrimi-hero-intro";
 
 // All the words here, in both languages. Change them here.
-// Line 2 is written in two parts: the globe picture takes the place of the letter "o" between them.
 const labels = {
   sq: {
-    line1: "Nga Kosova,",
-    line2a: "drejt b",
-    line2b: "tës.",
+    line1: "Nga Kosova",
+    line2: "drejt botës",
     board: "Nisjet e radhës",
     seeAll: "Shiko të gjitha ofertat",
     bus: "Me autobus",
     plane: "Me avion",
-    alt: "Krahu i një avioni mbi retë në perëndim të diellit",
   },
   en: {
-    line1: "From Kosova,",
-    line2a: "to the w",
-    line2b: "rld.",
+    line1: "From Kosovo",
+    line2: "to the world",
     board: "Next departures",
     seeAll: "See all offers",
     bus: "By bus",
     plane: "By plane",
-    alt: "Airplane wing over clouds at sunset",
   },
 };
 
@@ -114,18 +169,25 @@ function buildRows(lang: Lang, today: string): Row[] {
   return rows.sort((a, b) => a.date.localeCompare(b.date) || a.price - b.price);
 }
 
-// The globe picture takes the place of the letter "o". It is the file public/images/globe.png.
-function Globe() {
+// One line of the headline. Its words rise into place one after another,
+// coming out of a soft blur. startIndex keeps the timing going across both lines.
+function TitleLine({ text, startIndex, reduce }: { text: string; startIndex: number; reduce: boolean }) {
+  const words = text.split(" ");
   return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src="/images/globe.png"
-      alt=""
-      aria-hidden="true"
-      width={90}
-      height={90}
-      className="relative top-[0.01em] mx-[0.015em] inline-block h-[0.76em] w-[0.76em] align-baseline"
-    />
+    <span aria-hidden="true" className="block whitespace-nowrap">
+      {words.map((word, i) => (
+        <motion.span
+          key={i}
+          className="inline-block will-change-transform"
+          initial={reduce ? false : { opacity: 0, y: "0.45em", filter: "blur(10px)" }}
+          animate={{ opacity: 1, y: "0em", filter: "blur(0px)" }}
+          transition={{ delay: 0.15 + (startIndex + i) * 0.14, duration: 0.9, ease: [0.22, 1, 0.36, 1] }}
+        >
+          {word}
+          {i < words.length - 1 && " "}
+        </motion.span>
+      ))}
+    </span>
   );
 }
 
@@ -137,6 +199,28 @@ export default function Hero() {
   const [page, setPage] = useState(0);
   const [paused, setPaused] = useState(false);
   const [showBoard, setShowBoard] = useState(false);
+  // The departures board starts closed; tapping its bar opens the list.
+  const [boardOpen, setBoardOpen] = useState(false);
+  // The random photo order is picked once the page is open in the browser.
+  const imageOrder = useSyncExternalStore(subscribe, getImageOrder, () => null);
+  const [imageStep, setImageStep] = useState(0);
+
+  // Next photo every IMAGE_SECONDS.
+  useEffect(() => {
+    if (!imageOrder || imageOrder.length < 2) return;
+    const id = setInterval(() => setImageStep((s) => s + 1), IMAGE_SECONDS * 1000);
+    return () => clearInterval(id);
+  }, [imageOrder]);
+
+  // Load the next photo in advance so the change is smooth.
+  useEffect(() => {
+    if (!imageOrder) return;
+    const next = heroImages[imageOrder[(imageStep + 1) % imageOrder.length]];
+    const img = new Image();
+    img.src = next.src;
+  }, [imageOrder, imageStep]);
+
+  const activeImage = imageOrder ? heroImages[imageOrder[imageStep % imageOrder.length]] : null;
 
   const rows = today ? buildRows(lang, today) : [];
   const pages = Math.max(1, Math.ceil(rows.length / ROWS));
@@ -180,25 +264,42 @@ export default function Hero() {
 
   // Show the next rows every few seconds (not while the visitor hovers over the board).
   useEffect(() => {
-    if (pages < 2 || paused || !showBoard) return;
+    if (pages < 2 || paused || !showBoard || !boardOpen) return;
     const id = setInterval(() => setPage((p) => p + 1), ROTATE_SECONDS * 1000);
     return () => clearInterval(id);
-  }, [pages, paused, showBoard]);
+  }, [pages, paused, showBoard, boardOpen]);
 
-  const fullText = `${t.line1} ${t.line2a}o${t.line2b}`;
+  const fullText = `${t.line1} ${t.line2}`;
 
   return (
     <section className="relative flex min-h-[80svh] items-center overflow-hidden bg-black sm:min-h-screen">
-      <motion.img
-        src={heroImage}
-        alt={t.alt}
-        fetchPriority="high"
-        className="absolute inset-0 h-full w-full object-cover object-[80%_47%] opacity-75 sm:object-[center_47%] sm:opacity-100"
-        initial={{ scale: 1 }}
-        animate={{ scale: reduce ? 1 : 1.1 }}
-        transition={{ duration: 24, ease: "linear" }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/25 to-black" />
+      <AnimatePresence initial={false}>
+        {activeImage && (
+          // Each photo fades in and stays almost still: only a very slight zoom and drift.
+          <motion.div
+            key={`${imageStep}-${activeImage.src}`}
+            className="absolute inset-0 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0, transition: { duration: 2.2, ease: [0.4, 0, 0.2, 1] } }}
+            transition={{ duration: 2.2, ease: [0.4, 0, 0.2, 1] }}
+          >
+            <motion.img
+              src={activeImage.src}
+              alt={activeImage[lang]}
+              fetchPriority="high"
+              style={{ objectPosition: activeImage.focus }}
+              className="h-full w-full object-cover opacity-75 will-change-transform sm:opacity-100"
+              initial={reduce ? false : { scale: 1.05, x: "0%", y: "0%" }}
+              animate={reduce ? undefined : { scale: 1.02, ...activeImage.drift }}
+              transition={{ duration: IMAGE_SECONDS + 2.5, ease: "linear" }}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+      {/* Dark fade over the photo. It reaches full black a little before the bottom and
+          overhangs the edge by a few pixels, so no thin line of photo shows on phones. */}
+      <div className="absolute inset-x-0 -bottom-1 top-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.5),rgba(0,0,0,0.25)_45%,#000_94%)]" />
       <Snow />
 
       <div className="relative z-10 mx-auto flex w-full max-w-4xl flex-col items-center px-5 pb-14 pt-28 text-center text-white sm:px-6">
@@ -208,14 +309,21 @@ export default function Hero() {
           className={`${montserrat.className} text-[clamp(1.9rem,8.4vw,5rem)] font-extrabold uppercase leading-[0.98] tracking-[-0.01em] text-white`}
         >
           <span className="sr-only">{fullText}</span>
-          <span aria-hidden="true" className="block whitespace-nowrap">
-            {t.line1}
-          </span>
-          <span aria-hidden="true" className="block whitespace-nowrap text-white">
-            {t.line2a}
-            <Globe />
-            {t.line2b}
-          </span>
+          <TitleLine key={`${lang}-1`} text={t.line1} startIndex={0} reduce={!!reduce} />
+          <TitleLine
+            key={`${lang}-2`}
+            text={t.line2}
+            startIndex={t.line1.split(" ").length}
+            reduce={!!reduce}
+          />
+          {/* A short red line draws itself under the title once the words are in. */}
+          <motion.span
+            aria-hidden="true"
+            className="mx-auto mt-[0.28em] block h-[3px] w-[1.4em] origin-center rounded-full bg-red-600"
+            initial={reduce ? false : { scaleX: 0, opacity: 0 }}
+            animate={{ scaleX: 1, opacity: 1 }}
+            transition={{ delay: reduce ? 0 : 1.15, duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+          />
         </motion.h1>
 
         {/* Departures board: real upcoming trips from the offers data */}
@@ -230,55 +338,83 @@ export default function Hero() {
             onFocus={() => setPaused(true)}
             onBlur={() => setPaused(false)}
           >
-            <div className="flex items-center justify-between gap-3 border-b border-red-600/50 bg-black px-4 py-3">
-              <p className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/80 sm:text-sm">
+            <button
+              type="button"
+              onClick={() => setBoardOpen((o) => !o)}
+              aria-expanded={boardOpen}
+              aria-controls="departures-list"
+              className={`flex min-h-[3rem] w-full items-center justify-between gap-3 bg-black px-4 py-3 text-left transition-colors hover:bg-white/5 ${boardOpen ? "border-b border-red-600/50" : ""}`}
+            >
+              <span className="flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-white/80 sm:text-sm">
                 <span aria-hidden="true" className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-red-500 opacity-60 motion-reduce:animate-none" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-red-500" />
                 </span>
                 {t.board}
-              </p>
-              {pages > 1 && (
-                <span aria-hidden="true" className="flex gap-1">
-                  {Array.from({ length: pages }, (_, i) => (
-                    <span
-                      key={i}
-                      className={`h-1.5 w-1.5 rounded-full ${i === current ? "bg-red-500" : "bg-white/25"}`}
-                    />
-                  ))}
-                </span>
-              )}
-            </div>
+              </span>
+              <span className="flex items-center gap-3">
+                {boardOpen && pages > 1 && (
+                  <span aria-hidden="true" className="flex gap-1">
+                    {Array.from({ length: pages }, (_, i) => (
+                      <span
+                        key={i}
+                        className={`h-1.5 w-1.5 rounded-full ${i === current ? "bg-red-500" : "bg-white/25"}`}
+                      />
+                    ))}
+                  </span>
+                )}
+                <ChevronDown
+                  size={18}
+                  aria-hidden="true"
+                  className={`text-white/70 transition-transform duration-500 ${boardOpen ? "rotate-180" : ""}`}
+                />
+              </span>
+            </button>
 
-            <div className="min-h-[15rem] [perspective:700px]">
-              {shown.map((row, i) => {
-                const Icon = row.kind === "bus" ? Bus : Plane;
-                return (
+            {/* The list opens and closes smoothly; the headline and board stay centred together. */}
+            <AnimatePresence initial={false}>
+              {boardOpen && (
+                <motion.div
+                  id="departures-list"
+                  key="list"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: reduce ? 0 : 0.6, ease: [0.4, 0, 0.2, 1] }}
+                  className="overflow-hidden"
+                >
+                  <div className="min-h-[15rem] [perspective:700px]">
+                    {shown.map((row, i) => {
+                      const Icon = row.kind === "bus" ? Bus : Plane;
+                      return (
+                        <Link
+                          key={`${current}-${row.key}`}
+                          href={`/offers#${row.slug}`}
+                          style={{ animationDelay: `${i * 110}ms` }}
+                          className="board-row grid min-h-[3rem] grid-cols-[1rem_minmax(0,1fr)_auto_auto] items-center gap-x-3 border-t border-white/10 px-4 py-3 font-mono text-[12px] uppercase tracking-wide text-white transition hover:bg-white/10 sm:text-sm"
+                        >
+                          <Icon size={14} className="text-red-500" aria-hidden="true" />
+                          <span className="min-w-0 truncate">
+                            <span className="sr-only">{row.kind === "bus" ? t.bus : t.plane}: </span>
+                            {row.title}
+                          </span>
+                          <span className="text-white/70">{boardDate(row.date, lang)}</span>
+                          <span className="font-bold text-red-400">{row.price}€</span>
+                        </Link>
+                      );
+                    })}
+                  </div>
+
                   <Link
-                    key={`${current}-${row.key}`}
-                    href={`/offers#${row.slug}`}
-                    style={{ animationDelay: `${i * 110}ms` }}
-                    className="board-row grid min-h-[3rem] grid-cols-[1rem_minmax(0,1fr)_auto_auto] items-center gap-x-3 border-t border-white/10 px-4 py-3 font-mono text-[12px] uppercase tracking-wide text-white transition hover:bg-white/10 sm:text-sm"
+                    href="/offers"
+                    className="flex min-h-[3rem] items-center justify-between gap-3 border-t border-white/10 bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-700"
                   >
-                    <Icon size={14} className="text-red-500" aria-hidden="true" />
-                    <span className="min-w-0 truncate">
-                      <span className="sr-only">{row.kind === "bus" ? t.bus : t.plane}: </span>
-                      {row.title}
-                    </span>
-                    <span className="text-white/70">{boardDate(row.date, lang)}</span>
-                    <span className="font-bold text-red-400">{row.price}€</span>
+                    {t.seeAll}
+                    <ArrowRight size={16} aria-hidden="true" />
                   </Link>
-                );
-              })}
-            </div>
-
-            <Link
-              href="/offers"
-              className="flex min-h-[3rem] items-center justify-between gap-3 border-t border-white/10 bg-red-600 px-4 py-3 text-sm font-bold text-white transition hover:bg-red-700"
-            >
-              {t.seeAll}
-              <ArrowRight size={16} aria-hidden="true" />
-            </Link>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         )}
       </div>
