@@ -59,16 +59,16 @@ const SEEN_KEY = "kushtrimi-hero-intro";
 // All the words here, in both languages. Change them here.
 const labels = {
   sq: {
-    line1: "Nga Kosova",
-    line2: "drejt botës",
+    line1: "Udhëtimi juaj.",
+    line2: "Pasioni ynë.",
     board: "Nisjet e radhës",
     seeAll: "Shiko të gjitha ofertat",
     bus: "Me autobus",
     plane: "Me avion",
   },
   en: {
-    line1: "From Kosovo",
-    line2: "to the world",
+    line1: "Your Journey.",
+    line2: "Our Passion.",
     board: "Next departures",
     seeAll: "See all offers",
     bus: "By bus",
